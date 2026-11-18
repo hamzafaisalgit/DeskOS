@@ -1,3 +1,4 @@
+import { LaunchContext } from "../core/launch";
 import { Component, Suspense, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Rnd } from "react-rnd";
@@ -147,7 +148,9 @@ export function DesktopWindow({
                 </div>
               }
             >
-              <Content />
+              <LaunchContext.Provider value={{ entryId: w.entryId }}>
+                <Content />
+              </LaunchContext.Provider>
             </Suspense>
           </AppBoundary>
         </div>

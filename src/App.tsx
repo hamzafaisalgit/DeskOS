@@ -1,3 +1,4 @@
+import { DesktopFiles } from "./components/DesktopFiles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties, MouseEvent } from "react";
 import {
@@ -364,6 +365,7 @@ export default function App() {
               </button>
             );
           })}
+        <DesktopFiles />
         {windows.map((w, i) => (
           <DesktopWindow key={w.id} w={w} index={i} onMenu={windowMenu} />
         ))}

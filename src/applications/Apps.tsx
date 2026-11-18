@@ -1,73 +1,10 @@
 import { useEffect, useId, useRef, useState } from "react";
-import {
-  Folder,
-  FileText,
-  Download,
-  Image,
-  Music,
-  Clock,
-  Plus,
-  Trash2,
-  ArrowUpRight,
-} from "lucide-react";
+import { FileText, Plus, Trash2, ArrowUpRight } from "lucide-react";
 import { apps } from "../core/registry";
 import type { AppId } from "../core/registry";
 import { useDesk } from "../core/store";
 import { useNotes } from "../core/notes";
 import { calculate } from "../core/calculator";
-export function Files() {
-  const [place, setPlace] = useState("Home");
-  return (
-    <div className="split files">
-      <aside>
-        <small>FAVORITES</small>
-        {[
-          ["Home", Folder],
-          ["Documents", FileText],
-          ["Downloads", Download],
-          ["Pictures", Image],
-          ["Music", Music],
-          ["Recent", Clock],
-        ].map(([name, Icon]) => {
-          const I = Icon as typeof Folder;
-          return (
-            <button
-              className={place === name ? "selected" : ""}
-              key={String(name)}
-              onClick={() => setPlace(String(name))}
-            >
-              <I size={17} />
-              {String(name)}
-            </button>
-          );
-        })}
-        <div className="sidebar-bottom">
-          LOCAL WORKSPACE
-          <br />
-          <span>Phase 1 · Desktop foundation</span>
-        </div>
-      </aside>
-      <section className="files-main">
-        <div className="app-toolbar">Personal / {place}</div>
-        <div className="empty">
-          <div className="large-icon">
-            <Folder size={42} />
-          </div>
-          <small>A PLACE FOR EVERYTHING</small>
-          <h2>Your files, together.</h2>
-          <p>
-            Virtual file storage arrives in Phase 2.
-            <br />
-            This space will become your home for documents,
-            <br />
-            downloads, and everything you create.
-          </p>
-          <span className="badge">Desktop foundation is ready</span>
-        </div>
-      </section>
-    </div>
-  );
-}
 export function TerminalApp() {
   const inputId = useId();
   const [lines, setLines] = useState([

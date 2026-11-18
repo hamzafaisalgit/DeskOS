@@ -6,6 +6,7 @@ export type Bounds = { x: number; y: number; width: number; height: number };
 export type WindowState = Bounds & {
   id: string;
   appId: AppId;
+  entryId?: string;
   minimized: boolean;
   maximized: boolean;
   snapped?: boolean;
@@ -143,6 +144,7 @@ export function restoreWindows(saved: unknown): WindowState[] {
       ...constrain(w),
       id: w.id,
       appId: w.appId,
+      entryId: typeof w.entryId === "string" ? w.entryId : undefined,
       maximized: Boolean(w.maximized),
       minimized: Boolean(w.minimized),
       snapped: Boolean(w.snapped),
@@ -174,7 +176,7 @@ type State = {
   notices: Notice[];
   hidden: string[];
   setPrefs: (p: Partial<Preferences>) => void;
-  open: (id: AppId) => void;
+  open: (id: AppId, entryId?: string) => void;
   focus: (id: string) => void;
   close: (id: string) => void;
   minimize: (id: string) => void;
@@ -197,7 +199,7 @@ export const useDesk = create<State>((set, get) => ({
     set((s) => ({ prefs: validatePreferences({ ...s.prefs, ...p }) }));
     writeStorage("preferences", get().prefs);
   },
-  open: (appId) => {
+  open: (appId, entryId) => {
     const app = appById(appId);
     const existing = get().windows.find((w) => w.appId === appId);
     if (app.single && existing) get().focus(existing.id);
@@ -210,6 +212,7 @@ export const useDesk = create<State>((set, get) => ({
           {
             id,
             appId,
+            entryId,
             ...constrain({
               x: 180 + ((n * 28) % 180),
               y: 50 + ((n * 25) % 120),

@@ -1,3 +1,4 @@
+import { StorageSettings } from "./files/StorageSettings";
 import { useState } from "react";
 import { Palette, Monitor, PanelBottom, AppWindow, Info } from "lucide-react";
 import { useDesk, defaults } from "../core/store";
@@ -41,6 +42,7 @@ export function SettingsApp() {
           ["Taskbar", PanelBottom],
           ["Windows", AppWindow],
           ["System", Info],
+          ["Storage", Monitor],
         ].map(([name, Icon]) => {
           const I = Icon as typeof Palette;
           return (
@@ -59,6 +61,7 @@ export function SettingsApp() {
         <small>SETTINGS</small>
         <h2>{tab}</h2>
         <p className="muted">A desktop that feels like you.</p>
+        {tab === "Storage" && <StorageSettings />}
         {tab === "Appearance" && (
           <>
             <h3>Theme</h3>

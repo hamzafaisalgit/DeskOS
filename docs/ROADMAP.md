@@ -1,4 +1,4 @@
-﻿# DeskOS roadmap
+# DeskOS roadmap
 
 1. **Desktop Foundation — implemented; final verification recorded in PROGRESS.md.** Shell, centralized windows, registry, dock, launcher, command search, shortcuts, context menus, themes, six wallpapers, settings, notifications, versioned preferences, scratchpad Notes, DeskShell, safe Calculator, honest Files shell and initial tests.
 2. **Virtual Computer — not started.** Shared virtual filesystem, IndexedDB, Files operations, import/export, trash and associations.
@@ -9,4 +9,4 @@
 7. **Application Platform — not started.** App Center, SDK, isolated applications and capability permissions.
 8. **Production Readiness — not started.** Broader cross-browser/accessibility/performance testing, PWA, storage hardening and deployment readiness.
 
-The next implementation phase is Phase 2. Do not introduce a parallel filesystem inside any application.
+The next implementation phase is Phase 3. Do not introduce a parallel filesystem inside any application.

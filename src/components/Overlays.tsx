@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 export type MenuItem = { label: string; run: () => void };
@@ -11,6 +12,10 @@ export function FocusPanel({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(close);
+  useEffect(() => {
+    closeRef.current = close;
+  }, [close]);
   useEffect(() => {
     const before = document.activeElement as HTMLElement;
     const root = ref.current!;
@@ -19,12 +24,12 @@ export function FocusPanel({
       if (e.key === "Escape") {
         e.preventDefault();
         e.stopPropagation();
-        close();
+        closeRef.current();
       }
       if (e.key === "Tab") {
         const nodes = [
           ...root.querySelectorAll<HTMLElement>(
-            'button,input,select,[tabindex="0"]',
+            'button:not(:disabled),input:not(:disabled),textarea,select:not(:disabled),[tabindex="0"]',
           ),
         ];
         if (e.shiftKey && document.activeElement === nodes[0]) {
@@ -41,8 +46,8 @@ export function FocusPanel({
       root.removeEventListener("keydown", key);
       before?.focus();
     };
-  }, [close]);
-  return (
+  }, []);
+  return createPortal(
     <div
       className="overlay-backdrop"
       onMouseDown={(e) => {
@@ -58,7 +63,8 @@ export function FocusPanel({
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.querySelector(".desktop") ?? document.body,
   );
 }
 export function ContextMenu({

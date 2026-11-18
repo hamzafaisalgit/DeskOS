@@ -36,3 +36,9 @@ Browser tests default to installed Google Chrome (`channel: 'chrome'` in playwri
 Includes desktop personalization, six built-in wallpapers, functional window management, application search, notifications, Notes with autosave, safe arithmetic Calculator, allowlisted DeskShell and an honest Files shell. No host-machine shell access or virtual file storage yet. Preferences, notes and eligible layouts save on this browser. Terminal history and calculator input are session-only. Clearing browser site data deletes saved content; storage availability is not guaranteed.
 
 Architecture, decisions, roadmap and verification status are in `docs/`.
+
+## Phase 2 files
+
+Files now uses IndexedDB for real virtual folders and file contents. Create documents/folders, use Ctrl/Cmd+C/X/V and multi-selection, drag into folders or sidebar targets, import local files/folders, and export individual files or ZIP archives. Double-click files for safe previews or basic text editing. Use Trash for recovery and confirmed permanent deletion. The desktop's **Desktop files** menu creates real items in the virtual Desktop folder. Settings → Storage shows browser estimates and file usage.
+
+Phase 1 Notes remain a separate scratchpad until Phase 3. Virtual Documents/Downloads/Pictures are not your host computer's folders. Import only reads selected files. Imports/exports are capped at 200 MB per batch and text editing at 2 MB. Keep external exports of important work.

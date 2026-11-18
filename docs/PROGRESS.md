@@ -1,4 +1,6 @@
-﻿# Phase 1 progress
+# DeskOS progress
+
+The Phase 1 record below is historical; the Phase 2 section supersedes its Files/storage limitations.
 
 Phase 1 is implemented. Phases 2–8 have not been started.
 
@@ -44,3 +46,30 @@ The 32 Phase 1 acceptance areas are represented in the delivered implementation.
 ## Next
 
 Phase 2: shared virtual filesystem, IndexedDB, honest Files operations, import/export, trash and file associations. Preserve existing scratchpad records for Phase 3 migration.
+
+## Phase 2 — Virtual Computer (2026-11-19)
+
+Delivered a persistent IndexedDB filesystem and fully integrated File Explorer. Includes protected default folders; transactional create/read/update/rename/move/copy/duplicate; recursive Trash/restore/permanent deletion; stable paths; per-window history; grid/list/details views; sorting/filtering/global metadata search; multiselect and keyboard operations; shared cut/copy/paste; drag/drop; Favorites and Recent; details; and loading, empty, missing-location and operation-error states.
+
+Imports support multiple files, external drop and folder picker paths. Exports support individual downloads, folder/multi-file ZIPs with hierarchy and progress. Preview handlers support text editing with conflict detection, PNG/JPEG/WebP/GIF, browser PDF, audio and video, plus unsupported-file download fallback. Desktop virtual files support create, rename, open, trash and saved placement. Changes synchronize through the same database. Existing app shortcuts and scratchpad notes remain intact. Storage settings show real content totals, browser estimates, type distribution, largest files and access to Trash cleanup.
+
+Verification:
+
+- 33 unit/service tests pass: the existing 28 plus five critical filesystem tests.
+- One new Chrome integration test passes: folder/file creation, editing, export, Trash, restore and reload.
+- Existing Phase 1 browser regression suite reused: all 11 tests passed. Total browser checks: 12 passing automated tests.
+- Additional Chrome check verified exact imported text, exact ZIP contents and directory hierarchy, desktop synchronization, and no page exceptions during those workflows.
+- Dark/light screenshots inspected: `files-dark-preview.png`, `files-light-preview.png`.
+- TypeScript production build and ESLint pass.
+
+Practical limits:
+
+- Import/export batches are capped at 200 MB; text preview/edit at 2 MB; thumbnails are loaded only for supported raster images at most 10 MB.
+- Folder picker, PDF rendering and media codecs depend on browser support. Multi-file import and download are fallback paths. Empty directories in external folder-picker selections cannot be recovered because browsers supply files, not empty folders.
+- Imports commit each file independently; if a later file fails, already imported files remain. Failed operations are reported and existing data is preserved.
+- Explorer displays up to 200 items at a time with a Show next control; metadata remains in memory. Very large library optimization is later production-readiness work.
+- Notes scratchpads are preserved separately. The file preview's text editor provides real shared-file editing until Phase 3 integrates Notes fully.
+- Browser storage is local to the site/browser and may be cleared or evicted. ZIP export is the available filesystem backup path; complete DeskOS Capsule remains Phase 6.
+- Browser validation here used Chrome. Wider cross-browser/accessibility testing remains Phase 8.
+
+Next: Phase 3 core integrated applications and shared-file workflows.
