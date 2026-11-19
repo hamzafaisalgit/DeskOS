@@ -1,3 +1,4 @@
+import { interceptClose } from "./documents/guards";
 import { create } from "zustand";
 import { apps, appById } from "./registry";
 import type { AppId } from "./registry";
@@ -202,8 +203,15 @@ export const useDesk = create<State>((set, get) => ({
   open: (appId, entryId) => {
     const app = appById(appId);
     const existing = get().windows.find((w) => w.appId === appId);
-    if (app.single && existing) get().focus(existing.id);
-    else {
+    if (app.single && existing) {
+      if (entryId)
+        set((s) => ({
+          windows: s.windows.map((w) =>
+            w.id === existing.id ? { ...w, entryId } : w,
+          ),
+        }));
+      get().focus(existing.id);
+    } else {
       const id = crypto.randomUUID();
       const n = get().windows.length;
       set((s) => ({
@@ -243,7 +251,8 @@ export const useDesk = create<State>((set, get) => ({
           }
         : {};
     }),
-  close: (id) =>
+  close: (id) => {
+    if (interceptClose(id)) return;
     set((s) => {
       const windows = s.windows.filter((w) => w.id !== id);
       return {
@@ -254,7 +263,8 @@ export const useDesk = create<State>((set, get) => ({
             ? (windows.findLast((w) => !w.minimized)?.id ?? null)
             : s.active,
       };
-    }),
+    });
+  },
   minimize: (id) =>
     set((s) => ({
       windows: s.windows.map((w) =>

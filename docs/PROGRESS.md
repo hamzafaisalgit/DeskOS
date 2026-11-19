@@ -73,3 +73,27 @@ Practical limits:
 - Browser validation here used Chrome. Wider cross-browser/accessibility testing remains Phase 8.
 
 Next: Phase 3 core integrated applications and shared-file workflows.
+
+## Phase 3: Core Integrated Applications
+
+Implemented filesystem-backed Markdown/text Notes, copy-only legacy note migration, favorites/recent/search, formatting and reading mode, explicit save/Save As, duplicate/export and recoverable deletion. Code Studio includes locally bundled Monaco, language modes, tabs, expandable project folders, rename/Trash, formatting, find/replace, diagnostics, editor preferences and saved web preview. DeskShell now resolves real virtual paths and supports file commands, quoted arguments, redirection, completion and independent sessions. Calculator adds scientific functions, DEG/RAD and persistent history.
+
+All document apps share stable file IDs and content revisions. Conflicts cannot silently overwrite another save; deleted files retain open buffers for Save As. Dirty windows and tabs offer Save/Discard/Cancel. Explorer quick editing also uses revision-checked saves. Explorer and desktop expose compatible Open with actions and path copying.
+
+Verification on 2026-11-19:
+
+- 36 unit/service tests pass, including three focused Phase 3 tests.
+- 14 Chrome integration tests pass against the production build: desktop regressions, persistence/Trash, Notes-to-Terminal-to-Code sharing, external-change reload, dirty-close cancellation, linked CSS/JavaScript preview and blocked parent-page access.
+- ESLint and TypeScript/Vite production build pass.
+- Preview and Notes screenshots saved in this folder.
+- Fixed a terminal scroll effect cleanup issue and a production focus race after launching another app.
+- Monaco uses its textarea input mode for reliable browser keyboard handling.
+- Dependency audit after the DOMPurify override reported no vulnerabilities.
+
+Main implementation: `src/core/documents/`, `src/applications/editor/`, `src/applications/terminal/`, the filesystem service, shared associations, registry, window launch context and close guards.
+
+Installed dependencies: monaco-editor, @monaco-editor/react, react-markdown and remark-gfm. DOMPurify is overridden to patched 3.4.17.
+
+Limits: text opening is capped at 2 MB. Notes saves explicitly; unsaved buffers and complete tab sessions do not survive reload. Legacy note copying is optional and repeatable, with originals preserved. Preview runs static HTML, relative CSS and classic scripts; no modules, TypeScript/JSX compilation, npm, backend, remote resources or CSS asset URL resolution. Monaco chunks/workers remain large and Vite reports a bundle-size warning; editor loading is lazy. Browser validation used Chrome.
+
+No manual actions are required beyond starting the app. Optional legacy copying is available inside Notes. Next: Phase 4.

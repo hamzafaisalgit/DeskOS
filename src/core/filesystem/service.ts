@@ -35,6 +35,7 @@ export class Filesystem {
   ): Entry {
     return {
       id,
+      revision: 1,
       parentId,
       name,
       kind,
@@ -143,6 +144,32 @@ export class Filesystem {
     if (!c) throw Error("File content is unavailable.");
     return c.blob;
   }
+  async readDocument(id: string) {
+    return this.database.transaction(
+      "r",
+      this.database.entries,
+      this.database.contents,
+      async () => {
+        const entry = await this.getEntry(id);
+        if (entry.trashed) throw Error("This document is in Trash.");
+        const blob = await this.getFileContent(id);
+        if (blob.size > 2 * 1024 * 1024)
+          throw Error("Editors support files up to 2 MB.");
+        return { entry, blob };
+      },
+    );
+  }
+  async saveDocument(id: string, text: string, revision: number) {
+    return this.transaction(async () => {
+      const e = await this.getEntry(id);
+      if ((e.revision ?? 0) !== revision)
+        throw Error(
+          "Conflict: another application saved this file. Reload or Save As to keep both versions.",
+        );
+      await this.updateFileContent(id, new Blob([text], { type: e.mime }));
+      return this.getEntry(id);
+    });
+  }
   async updateFileContent(id: string, blob: Blob, expectedModified?: number) {
     return this.transaction(async () => {
       const e = await this.getEntry(id);
@@ -155,6 +182,7 @@ export class Filesystem {
       await this.database.contents.put({ id, blob });
       await this.database.entries.update(id, {
         size: blob.size,
+        revision: (e.revision ?? 0) + 1,
         modified: Math.max(Date.now(), e.modified + 1),
         accessed: Date.now(),
       });
@@ -251,6 +279,20 @@ export class Filesystem {
             });
         }
       }
+    });
+  }
+  async transferNamed(id: string, target: string, name: string, copy: boolean) {
+    return this.transaction(async () => {
+      await this.name(target, name);
+      const before = new Set(
+        (await this.listDirectory(target)).map((e) => e.id),
+      );
+      await this.transfer([id], target, copy);
+      const result = copy
+        ? (await this.listDirectory(target)).find((e) => !before.has(e.id))
+        : await this.getEntry(id);
+      if (!result) throw Error("Copy could not be located.");
+      await this.renameEntry(result.id, name);
     });
   }
   moveEntry(id: string, target: string) {

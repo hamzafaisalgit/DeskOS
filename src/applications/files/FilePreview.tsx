@@ -54,16 +54,20 @@ export function FilePreview({
   const [original, setOriginal] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [version, setVersion] = useState(entry.modified);
+  const [version, setVersion] = useState(entry.revision ?? 0);
   const [dimensions, setDimensions] = useState("");
   const [saving, setSaving] = useState(false);
   const handler = fileHandler(entry);
   useEffect(() => {
     let active = true;
     let objectUrl = "";
-    filesystem
-      .getFileContent(entry.id)
-      .then(async (blob) => {
+    (handler === "text"
+      ? filesystem.readDocument(entry.id)
+      : filesystem
+          .getFileContent(entry.id)
+          .then((blob) => ({ entry: { revision: 0 }, blob }))
+    )
+      .then(async ({ entry: snapshot, blob }) => {
         if (handler === "text") {
           if (blob.size > 2 * 1024 * 1024)
             throw Error(
@@ -78,6 +82,7 @@ export function FilePreview({
             }
           }
           if (active) {
+            setVersion(snapshot.revision ?? 0);
             setText(value);
             setOriginal(value);
           }
@@ -155,12 +160,12 @@ export function FilePreview({
                 onClick={async () => {
                   setSaving(true);
                   try {
-                    await filesystem.updateFileContent(
+                    const saved = await filesystem.saveDocument(
                       entry.id,
-                      new Blob([text], { type: entry.mime }),
+                      text,
                       version,
                     );
-                    setVersion((await filesystem.getEntry(entry.id)).modified);
+                    setVersion(saved.revision ?? 0);
                     setOriginal(text);
                   } catch (e) {
                     setError(String(e));

@@ -1,0 +1,380 @@
+﻿.document-app {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  container-type: inline-size;
+}
+.document-activity {
+  width: 42px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--hover);
+  border-right: 1px solid var(--border);
+  padding-top: 12px;
+  gap: 10px;
+}
+.document-activity button {
+  padding: 8px;
+  color: var(--muted);
+}
+.document-sidebar {
+  width: 205px;
+  min-width: 140px;
+  max-width: 40%;
+  resize: horizontal;
+  overflow: auto;
+  background: var(--hover);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 12px;
+}
+.document-brand {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin-bottom: 16px;
+  color: var(--accent);
+}
+.document-sidebar > small {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+.document-sidebar input,
+.document-sidebar select {
+  font-size: 11px;
+  width: 100%;
+  min-width: 0;
+}
+.document-sidebar > button {
+  justify-content: flex-start;
+  font-size: 10px;
+}
+.document-collections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.document-collections button {
+  font-size: 9px;
+  padding: 5px 7px;
+  text-transform: capitalize;
+}
+.document-file-list {
+  flex: 1;
+  overflow: auto;
+  min-height: 70px;
+}
+.document-file-list button,
+.project-folders button {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  font-size: 11px;
+  padding: 9px 7px;
+  gap: 7px;
+}
+.document-file-list button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.document-file-list p {
+  font-size: 11px;
+  color: var(--muted);
+}
+.document-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.document-tabs {
+  display: flex;
+  flex-shrink: 0;
+  overflow: auto;
+  min-height: 39px;
+  border-bottom: 1px solid var(--border);
+  background: var(--hover);
+}
+.document-tabs > div {
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+  max-width: 240px;
+}
+.document-tabs button {
+  border-radius: 0;
+  font-size: 11px;
+  padding: 10px;
+}
+.document-tabs .active-tab {
+  background: var(--solid);
+  border-top: 2px solid var(--accent);
+}
+.dirty-dot {
+  font-size: 7px;
+  color: var(--accent);
+}
+.document-toolbar,
+.format-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.document-toolbar button,
+.format-toolbar button {
+  font-size: 10px;
+  padding: 6px 8px;
+}
+.document-toolbar button:disabled {
+  opacity: 0.4;
+}
+.document-editor {
+  flex: 1;
+  min-height: 100px;
+  overflow: hidden;
+}
+.document-editor > textarea {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  line-height: 1.9;
+  padding: 30px 38px;
+  outline: none;
+}
+.markdown-document {
+  height: 100%;
+  overflow: auto;
+  padding: 30px 38px;
+  font-size: 15px;
+  line-height: 1.9;
+}
+.markdown-document h1 {
+  font-size: 30px;
+}
+.markdown-document h2 {
+  font-size: 24px;
+}
+.markdown-document h3 {
+  font-size: 18px;
+}
+.markdown-document ul {
+  list-style: disc;
+  padding-left: 24px;
+}
+.markdown-document ol {
+  list-style: decimal;
+  padding-left: 24px;
+}
+.markdown-document blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 18px;
+  color: var(--muted);
+}
+.markdown-document pre {
+  background: var(--panel);
+  padding: 16px;
+  overflow: auto;
+  border-radius: 8px;
+}
+.markdown-document a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.markdown-document hr {
+  border-color: var(--border);
+  margin: 20px 0;
+}
+.document-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 9px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.document-status time {
+  font-size: 9px;
+}
+.document-bottom {
+  max-height: 180px;
+  overflow: auto;
+  background: var(--hover);
+  border-top: 1px solid var(--border);
+  padding: 12px;
+  font-size: 11px;
+}
+.document-bottom label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 5px 15px 10px 0;
+}
+.document-bottom pre {
+  white-space: pre-wrap;
+  font-size: 10px;
+  color: var(--muted);
+}
+.document-bottom strong {
+  display: block;
+  font-size: 10px;
+}
+.document-warning {
+  background: #e6ae5015;
+  padding: 10px 14px;
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.document-warning button {
+  font-size: 10px;
+  text-decoration: underline;
+}
+.document-welcome {
+  gap: 16px;
+  flex: 1;
+}
+.document-welcome > svg {
+  color: var(--accent);
+}
+.document-welcome small {
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+.document-close-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.web-preview {
+  width: 1000px;
+  height: 700px;
+  display: flex;
+  flex-direction: column;
+}
+.web-preview header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px;
+}
+.web-preview header span {
+  flex: 1;
+  color: var(--muted);
+  font-size: 10px;
+}
+.web-preview iframe {
+  width: 100%;
+  flex: 1;
+  background: white;
+  border: 0;
+}
+.calc-mode {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+}
+.scientific-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.scientific-grid button {
+  font-size: 11px;
+  background: var(--hover);
+  color: var(--accent);
+  padding: 7px;
+}
+.calc-history {
+  overflow: auto;
+  flex: 1;
+}
+.calc-history > button {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--border);
+}
+.calculator footer {
+  display: flex;
+  justify-content: space-between;
+}
+.calculator footer button {
+  font-size: 10px;
+  padding: 4px;
+}
+.calculator output {
+  user-select: text;
+}
+@container (max-width:650px) {
+  .document-sidebar {
+    width: 155px;
+  }
+  .document-activity {
+    width: 35px;
+  }
+  .document-toolbar button {
+    font-size: 9px;
+    padding: 5px;
+  }
+  .document-editor > textarea,
+  .markdown-document {
+    padding: 20px;
+  }
+  .document-status time {
+    display: none;
+  }
+}
+@container (max-width:450px) {
+  .document-sidebar {
+    width: 120px;
+    min-width: 100px;
+  }
+  .document-brand strong {
+    font-size: 11px;
+  }
+  .document-toolbar {
+    padding: 4px;
+  }
+  .document-welcome h2 {
+    font-size: 20px;
+  }
+  .document-status {
+    font-size: 8px;
+  }
+}
+
+.project-tree-folder > summary {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 6px;
+}
+.project-tree-folder > summary::before {
+  content: "?";
+}
+.project-tree-folder[open] > summary::before {
+  content: "?";
+}
+.project-tree-folder > div {
+  padding-left: 14px;
+  border-left: 1px solid var(--border);
+}

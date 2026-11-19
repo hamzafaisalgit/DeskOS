@@ -1,4 +1,4 @@
-﻿import { expect, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 test("filesystem create edit export trash restore and reload", async ({
   page,
 }) => {
@@ -23,7 +23,10 @@ test("filesystem create edit export trash restore and reload", async ({
   await files
     .locator(".file-item")
     .filter({ hasText: "sample.txt" })
-    .dblclick();
+    .click({ button: "right" });
+  await page
+    .getByRole("menuitem", { name: "Quick preview / edit", exact: true })
+    .click();
   await page
     .getByRole("textbox", { name: "File text", exact: true })
     .fill("Persistent virtual content");
@@ -50,7 +53,10 @@ test("filesystem create edit export trash restore and reload", async ({
   await files
     .locator(".file-item")
     .filter({ hasText: "sample.txt" })
-    .dblclick();
+    .click({ button: "right" });
+  await page
+    .getByRole("menuitem", { name: "Quick preview / edit", exact: true })
+    .click();
   await expect(
     page.getByRole("textbox", { name: "File text", exact: true }),
   ).toHaveValue("Persistent virtual content");

@@ -1,3 +1,8 @@
+import {
+  compatibleApps,
+  openDocument,
+  copyFilePath,
+} from "../../core/filesystem/openWith";
 import { FileThumbnail } from "./FileThumbnail";
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { DragEvent } from "react";
@@ -196,7 +201,7 @@ export function FileExplorer() {
   }
   function open(e: Entry) {
     if (e.kind === "directory") navigate(e.id);
-    else setPreview(e.id);
+    else if (!openDocument(e)) setPreview(e.id);
   }
   function create(kind: "directory" | "txt" | "md" | "json") {
     setDialog({
@@ -315,6 +320,20 @@ export function FileExplorer() {
                 label: "Export / ZIP",
                 run: () =>
                   void run("Export", () => exportFiles(ids, setProgress)),
+              },
+              ...compatibleApps(item).map((app) => ({
+                label: `Open with ${app === "notes" ? "Notes" : "Code Studio"}`,
+                run: () => useDesk.getState().open(app, item.id),
+              })),
+              { label: "Quick preview / edit", run: () => setPreview(item.id) },
+              {
+                label: "Copy file path",
+                run: () =>
+                  void fs
+                    .getEntryPath(item.id)
+                    .then((path) =>
+                      copyFilePath("/" + path.map((e) => e.name).join("/")),
+                    ),
               },
               {
                 label: "Show details",

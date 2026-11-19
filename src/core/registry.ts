@@ -1,12 +1,14 @@
 import { lazy } from "react";
 import {
   Folder,
+  Code2,
   Terminal,
   StickyNote,
   Calculator,
   Settings,
 } from "lucide-react";
-export type AppId = "files" | "terminal" | "notes" | "calculator" | "settings";
+export type AppId =
+  "files" | "terminal" | "notes" | "calculator" | "settings" | "code";
 export const apps = [
   {
     id: "files",
@@ -32,7 +34,9 @@ export const apps = [
     id: "terminal",
     icon: Terminal,
     component: lazy(() =>
-      import("../applications/Apps").then((m) => ({ default: m.TerminalApp })),
+      import("../applications/terminal/Terminal").then((m) => ({
+        default: m.TerminalApp,
+      })),
     ),
     resizable: true,
     supportedFileTypes: [] as string[],
@@ -50,10 +54,12 @@ export const apps = [
     id: "notes",
     icon: StickyNote,
     component: lazy(() =>
-      import("../applications/Apps").then((m) => ({ default: m.Notes })),
+      import("../applications/editor/DocumentEditor").then((m) => ({
+        default: m.NotesApp,
+      })),
     ),
     resizable: true,
-    supportedFileTypes: [] as string[],
+    supportedFileTypes: ["md", "txt", "markdown"],
     name: "Notes",
     category: "Productivity",
     description: "A quiet place for your thoughts",
@@ -68,7 +74,7 @@ export const apps = [
     id: "calculator",
     icon: Calculator,
     component: lazy(() =>
-      import("../applications/Apps").then((m) => ({
+      import("../applications/editor/Calculator").then((m) => ({
         default: m.CalculatorApp,
       })),
     ),
@@ -103,6 +109,26 @@ export const apps = [
     minWidth: 360,
     minHeight: 300,
     single: true,
+  },
+  {
+    id: "code",
+    icon: Code2,
+    component: lazy(() =>
+      import("../applications/editor/DocumentEditor").then((m) => ({
+        default: m.CodeStudio,
+      })),
+    ),
+    resizable: true,
+    supportedFileTypes: ["html", "css", "js", "ts", "json", "md", "txt"],
+    name: "Code Studio",
+    category: "Development",
+    description: "Edit shared files and preview web projects",
+    color: "#76bce7",
+    width: 1100,
+    height: 700,
+    minWidth: 400,
+    minHeight: 320,
+    single: false,
   },
 ] as const;
 export const appById = (id: AppId) => apps.find((a) => a.id === id)!;

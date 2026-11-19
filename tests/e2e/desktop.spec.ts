@@ -88,30 +88,34 @@ test("window dragging, resizing, minimize, maximize, snap and reload restoration
   await page.getByRole("button", { name: "Close Files", exact: true }).click();
   await expect(win).toHaveCount(0);
 });
-test("notes create, rename, autosave, reload, cancel delete and confirm delete", async ({
-  page,
-}) => {
+test("notes save, reload and cancel or confirm Trash", async ({ page }) => {
   await page.getByRole("button", { name: "Launch Notes", exact: true }).click();
-  await page.getByRole("button", { name: "Create a note" }).click();
   await page
-    .getByRole("textbox", { name: "Note title", exact: true })
-    .fill("My persisted note");
+    .getByRole("button", { name: "Create a note", exact: true })
+    .click();
   await page
-    .getByRole("textbox", { name: "Note text", exact: true })
+    .getByRole("textbox", { name: "Name", exact: true })
+    .fill("Persisted.md");
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
+  await page
+    .getByRole("textbox", { name: "Note text" })
     .fill("A real saved thought.");
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await page.reload();
-  await expect(
-    page.getByRole("textbox", { name: "Note text", exact: true }),
-  ).toHaveValue("A real saved thought.");
-  await page.getByRole("button", { name: "Delete note", exact: true }).click();
+  await expect(page.getByRole("textbox", { name: "Note text" })).toHaveValue(
+    "A real saved thought.",
+  );
+  await page.getByRole("button", { name: "Trash document" }).click();
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
+  await expect(page.getByRole("textbox", { name: "Note text" })).toHaveValue(
+    "A real saved thought.",
+  );
+  await page.getByRole("button", { name: "Trash document" }).click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await expect(
-    page.getByRole("textbox", { name: "Note title", exact: true }),
-  ).toHaveValue("My persisted note");
-  await page.getByRole("button", { name: "Delete note", exact: true }).click();
-  await page.getByRole("button", { name: "Delete", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "Create a note" }),
+    page.getByText("This file was deleted or moved to Trash.", {
+      exact: false,
+    }),
   ).toBeVisible();
 });
 test("terminal commands, history, errors and calculator keyboard", async ({
@@ -301,7 +305,7 @@ test("multiple windows retain state through minimize and focus switches", async 
     page.getByRole("region", { name: "Terminal window" }),
   ).toHaveCount(2);
 });
-test("storage failure is visible while notes stay editable in memory", async ({
+test("preference storage failure is visible while filesystem notes remain editable", async ({
   page,
 }) => {
   await page.evaluate(() => {
@@ -310,15 +314,13 @@ test("storage failure is visible while notes stay editable in memory", async ({
     };
   });
   await page.getByRole("button", { name: "Launch Notes", exact: true }).click();
-  await page.getByRole("button", { name: "Create a note" }).click();
   await page
-    .getByRole("textbox", { name: "Note text", exact: true })
-    .fill("Keep this text");
-  await expect(
-    page.getByText("Storage unavailable — copy your text before closing"),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("textbox", { name: "Note text", exact: true }),
-  ).toHaveValue("Keep this text");
+    .getByRole("button", { name: "Create a note", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Confirm", exact: true }).click();
+  await page.getByRole("textbox", { name: "Note text" }).fill("Keep this text");
+  await expect(page.getByRole("textbox", { name: "Note text" })).toHaveValue(
+    "Keep this text",
+  );
   await expect(page.locator(".toast.error").first()).toBeVisible();
 });

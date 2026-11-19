@@ -1,5 +1,6 @@
 export type Entry = {
   id: string;
+  revision?: number;
   parentId: string | null;
   name: string;
   kind: "file" | "directory";

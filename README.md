@@ -1,4 +1,4 @@
-﻿# DeskOS
+# DeskOS
 
 Your Computer, Reinvented. A local-first browser desktop built with React, TypeScript, Vite and Tailwind CSS.
 
@@ -31,14 +31,29 @@ Browser tests default to installed Google Chrome (`channel: 'chrome'` in playwri
 - Escape: close an overlay. Arrow keys and Enter navigate launcher/search and context menus.
 - Terminal: Up/Down for history, Ctrl+L clears output.
 
-## Phase 1 scope
+## Integrated desktop
 
-Includes desktop personalization, six built-in wallpapers, functional window management, application search, notifications, Notes with autosave, safe arithmetic Calculator, allowlisted DeskShell and an honest Files shell. No host-machine shell access or virtual file storage yet. Preferences, notes and eligible layouts save on this browser. Terminal history and calculator input are session-only. Clearing browser site data deletes saved content; storage availability is not guaranteed.
+Phases 1?3 provide window management, themes, desktop shortcuts, Files, filesystem-backed Notes, DeskShell, Code Studio and Calculator. All document apps share the same IndexedDB files. Right-click files in Explorer or on the desktop to choose **Open with**. Explorer also retains its quick preview editor.
 
-Architecture, decisions, roadmap and verification status are in `docs/`.
+Notes edits plain text or Markdown, with formatting tools, a reading view, favorites, recent files, search and export. Use **Copy legacy notes to Documents** to copy original scratchpads into files; originals are retained. Save explicitly with Ctrl/Cmd+S. Dirty tabs prompt before closing, and conflicting saves require Reload or Save As.
 
-## Phase 2 files
+Code Studio offers Monaco editing, tabs, language support, search/replace, formatting, diagnostics, folders and isolated web preview. Run a saved HTML file with relative local CSS and classic JavaScript. The preview blocks network access and cannot access DeskOS storage or the parent page.
 
-Files now uses IndexedDB for real virtual folders and file contents. Create documents/folders, use Ctrl/Cmd+C/X/V and multi-selection, drag into folders or sidebar targets, import local files/folders, and export individual files or ZIP archives. Double-click files for safe previews or basic text editing. Use Trash for recovery and confirmed permanent deletion. The desktop's **Desktop files** menu creates real items in the virtual Desktop folder. Settings → Storage shows browser estimates and file usage.
+DeskShell operates only on virtual files. Type `help` for commands, use quoted paths with spaces, and Tab for completion. For example:
 
-Phase 1 Notes remain a separate scratchpad until Phase 3. Virtual Documents/Downloads/Pictures are not your host computer's folders. Import only reads selected files. Imports/exports are capped at 200 MB per batch and text editing at 2 MB. Keep external exports of important work.
+```sh
+cd Documents
+echo "Hello DeskOS" > hello.txt
+cat hello.txt
+open hello.txt
+```
+
+Calculator includes scientific functions, DEG/RAD modes, keyboard input, and persistent calculation history. Expressions are parsed without JavaScript evaluation.
+
+## Limits
+
+Virtual folders are not host-machine folders. Browser site data can be cleared or evicted; export important files. Imports/exports are capped at 200 MB per batch and text opening at 2 MB. Saved active documents restore with their windows; unsaved buffers and all tab layouts do not persist after refresh. Terminal history is per window/session.
+
+Web preview supports static HTML, inline or relative linked CSS, classic scripts and relative images up to 5 MB. It does not compile TypeScript/JSX, resolve npm packages or ES modules, run servers, or resolve CSS asset URLs. Monaco and its language workers load locally on demand and increase first editor load time. Broader cross-browser and performance validation remains Phase 8.
+
+See [architecture](docs/ARCHITECTURE.md), [progress](docs/PROGRESS.md) and [roadmap](docs/ROADMAP.md). No manual migration is required to use new files; legacy note copying is optional.

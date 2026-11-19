@@ -22,3 +22,12 @@
 - Imported source and HTML are treated as text. Raster-only image preview avoids executing SVG content. PDF/media preview uses browser capabilities and reports unsupported formats.
 - Preserve Phase 1 Notes; provide a functional basic filesystem text editor now. Phase 3 can bridge Notes without destructive migration.
 - Add only five focused filesystem tests and one end-to-end filesystem workflow; reuse the existing Phase 1 regression suite.
+
+## Phase 3 decisions
+
+- Keep Markdown serialization as plain text; use react-markdown/remark-gfm for a safe reading view instead of storing opaque editor JSON.
+- Use explicit saves and revision conflicts. Preserve legacy scratchpads through copy-only migration.
+- Bundle Monaco and workers locally; lazy-load the editor. Override Monaco's pinned DOMPurify dependency with patched 3.4.17.
+- Share files through existing Dexie services and stable IDs, including shell commands and Explorer quick editing.
+- Preview only saved static browser projects in an opaque-origin iframe with restrictive CSP. No host shell, backend, compiler, npm runtime or parent-page bridge.
+- Add three focused unit tests and two integration workflows; adapt existing regression tests for explicit saves and file associations.

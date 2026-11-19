@@ -1,4 +1,6 @@
+import { openDocument } from "../core/filesystem/openWith";
 import { useCallback, useState } from "react";
+import { compatibleApps, copyFilePath } from "../core/filesystem/openWith";
 import { Plus } from "lucide-react";
 import { useFilesystem } from "../core/filesystem/hooks";
 import { filesystem } from "../core/filesystem/service";
@@ -152,13 +154,13 @@ export function DesktopFiles() {
             onDoubleClick={() => {
               if (entry.kind === "directory")
                 useDesk.getState().open("files", entry.id);
-              else setPreview(entry.id);
+              else if (!openDocument(entry)) setPreview(entry.id);
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 if (entry.kind === "directory")
                   useDesk.getState().open("files", entry.id);
-                else setPreview(entry.id);
+                else if (!openDocument(entry)) setPreview(entry.id);
               }
             }}
             onContextMenu={(e) => {
@@ -173,7 +175,24 @@ export function DesktopFiles() {
                     run: () => {
                       if (entry.kind === "directory")
                         useDesk.getState().open("files", entry.id);
-                      else setPreview(entry.id);
+                      else if (!openDocument(entry)) setPreview(entry.id);
+                    },
+                  },
+                  ...compatibleApps(entry).map((app) => ({
+                    label: `Open with ${app === "notes" ? "Notes" : "Code Studio"}`,
+                    run: () => useDesk.getState().open(app, entry.id),
+                  })),
+                  {
+                    label: "Copy path",
+                    run: () => {
+                      void filesystem
+                        .getEntryPath(entry.id)
+                        .then((parts) =>
+                          copyFilePath(
+                            "/" + parts.map((part) => part.name).join("/"),
+                          ),
+                        )
+                        .catch(notify);
                     },
                   },
                   {

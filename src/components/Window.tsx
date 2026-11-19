@@ -148,7 +148,9 @@ export function DesktopWindow({
                 </div>
               }
             >
-              <LaunchContext.Provider value={{ entryId: w.entryId }}>
+              <LaunchContext.Provider
+                value={{ entryId: w.entryId, windowId: w.id }}
+              >
                 <Content />
               </LaunchContext.Provider>
             </Suspense>
