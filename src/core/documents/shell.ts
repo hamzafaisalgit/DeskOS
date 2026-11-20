@@ -1,3 +1,4 @@
+import { openDocument } from "../filesystem/openWith";
 import { filesystem as fs } from "../filesystem/service";
 import { HOME } from "../filesystem/types";
 import { resolveVirtual, destination } from "./paths";
@@ -296,15 +297,10 @@ export async function executeCommand(
       if (app) useDesk.getState().open(app.id);
       else {
         const e = await resolveVirtual(id, cwd);
-        useDesk
-          .getState()
-          .open(
-            e.kind === "directory"
-              ? "files"
-              : /^(md|txt)$/.test(e.extension)
-                ? "notes"
-                : "code",
-            e.id,
+        if (e.kind === "directory") useDesk.getState().open("files", e.id);
+        else if (!openDocument(e))
+          throw Error(
+            "No compatible application. Open the containing folder in Files to export this file.",
           );
       }
       break;

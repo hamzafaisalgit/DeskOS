@@ -64,6 +64,13 @@ export const mimeFor = (name: string) =>
     pdf: "application/pdf",
     mp3: "audio/mpeg",
     wav: "audio/wav",
+    ogg: "audio/ogg",
+    m4a: "audio/mp4",
+    flac: "audio/flac",
+    aac: "audio/aac",
+    ogv: "video/ogg",
+    vtt: "text/vtt",
+    deskcanvas: "application/x-deskcanvas+json",
     mp4: "video/mp4",
     webm: "video/webm",
   })[name.split(".").at(-1)!.toLowerCase()] ?? "application/octet-stream";

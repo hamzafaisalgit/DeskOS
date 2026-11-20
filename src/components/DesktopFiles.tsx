@@ -1,3 +1,4 @@
+import { appById } from "../core/registry";
 import { openDocument } from "../core/filesystem/openWith";
 import { useCallback, useState } from "react";
 import { compatibleApps, copyFilePath } from "../core/filesystem/openWith";
@@ -179,7 +180,7 @@ export function DesktopFiles() {
                     },
                   },
                   ...compatibleApps(entry).map((app) => ({
-                    label: `Open with ${app === "notes" ? "Notes" : "Code Studio"}`,
+                    label: `Open with ${appById(app).name}`,
                     run: () => useDesk.getState().open(app, entry.id),
                   })),
                   {

@@ -1,3 +1,4 @@
+import { appById } from "../../core/registry";
 import {
   compatibleApps,
   openDocument,
@@ -322,7 +323,7 @@ export function FileExplorer() {
                   void run("Export", () => exportFiles(ids, setProgress)),
               },
               ...compatibleApps(item).map((app) => ({
-                label: `Open with ${app === "notes" ? "Notes" : "Code Studio"}`,
+                label: `Open with ${appById(app).name}`,
                 run: () => useDesk.getState().open(app, item.id),
               })),
               { label: "Quick preview / edit", run: () => setPreview(item.id) },

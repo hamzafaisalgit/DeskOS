@@ -6,9 +6,24 @@ import {
   StickyNote,
   Calculator,
   Settings,
+  Music2,
+  Images,
+  Clapperboard,
+  BookOpen,
+  Palette,
 } from "lucide-react";
 export type AppId =
-  "files" | "terminal" | "notes" | "calculator" | "settings" | "code";
+  | "files"
+  | "terminal"
+  | "notes"
+  | "calculator"
+  | "settings"
+  | "code"
+  | "music"
+  | "photos"
+  | "cinema"
+  | "pdf"
+  | "canvas";
 export const apps = [
   {
     id: "files",
@@ -128,6 +143,104 @@ export const apps = [
     height: 700,
     minWidth: 400,
     minHeight: 320,
+    single: false,
+  },
+  {
+    id: "music",
+    icon: Music2,
+    component: lazy(() =>
+      import("../applications/media/Music").then((m) => ({
+        default: m.default,
+      })),
+    ),
+    resizable: true,
+    supportedFileTypes: ["mp3", "wav", "ogg", "m4a", "flac"],
+    name: "Music",
+    category: "Creative",
+    description: "Your music, in its own space",
+    color: "#ec9db6",
+    width: 1080,
+    height: 700,
+    minWidth: 420,
+    minHeight: 360,
+    single: true,
+  },
+  {
+    id: "photos",
+    icon: Images,
+    component: lazy(() =>
+      import("../applications/media/Photos").then((m) => ({
+        default: m.default,
+      })),
+    ),
+    resizable: true,
+    supportedFileTypes: ["png", "jpg", "jpeg", "webp", "gif"],
+    name: "Photos",
+    category: "Creative",
+    description: "A fresh perspective on your pictures",
+    color: "#a9b4fc",
+    width: 1080,
+    height: 700,
+    minWidth: 420,
+    minHeight: 360,
+    single: false,
+  },
+  {
+    id: "cinema",
+    icon: Clapperboard,
+    component: lazy(() =>
+      import("../applications/media/Cinema").then((m) => ({
+        default: m.default,
+      })),
+    ),
+    resizable: true,
+    supportedFileTypes: ["mp4", "webm", "ogv"],
+    name: "Cinema",
+    category: "Creative",
+    description: "The best seat is yours",
+    color: "#edb785",
+    width: 1080,
+    height: 700,
+    minWidth: 420,
+    minHeight: 360,
+    single: true,
+  },
+  {
+    id: "pdf",
+    icon: BookOpen,
+    component: lazy(() =>
+      import("../applications/media/Pdf").then((m) => ({ default: m.default })),
+    ),
+    resizable: true,
+    supportedFileTypes: ["pdf"],
+    name: "PDF Studio",
+    category: "Creative",
+    description: "Read, find and remember",
+    color: "#89cbbb",
+    width: 1080,
+    height: 700,
+    minWidth: 420,
+    minHeight: 360,
+    single: false,
+  },
+  {
+    id: "canvas",
+    icon: Palette,
+    component: lazy(() =>
+      import("../applications/media/Canvas").then((m) => ({
+        default: m.default,
+      })),
+    ),
+    resizable: true,
+    supportedFileTypes: ["deskcanvas", "png", "jpg", "jpeg", "webp"],
+    name: "Canvas",
+    category: "Creative",
+    description: "Make something entirely yours",
+    color: "#c6a0ee",
+    width: 1080,
+    height: 700,
+    minWidth: 420,
+    minHeight: 360,
     single: false,
   },
 ] as const;

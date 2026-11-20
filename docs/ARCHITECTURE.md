@@ -24,3 +24,15 @@ The Dexie `deskos-files-v1` database separates indexed metadata from Blob conten
 Small validated preferences, layouts, legacy notes and calculator history use versioned localStorage keys. Files use IndexedDB. Storage errors are visible. File imports/exports are capped at 200 MB, text opening at 2 MB and preview images at 5 MB. Clearing browser site data removes stored content.
 
 Vitest covers core state, filesystem operations, revisions, shell integration and arithmetic. Playwright covers desktop regressions, saved documents, conflicts, dirty-close protection and preview isolation. See PROGRESS.md for verification results.
+
+## Phase 4 media architecture
+
+The registry lazily loads Music, Photos, Cinema, PDF Studio and Canvas. The existing Open With service routes media by actual file type; desktop, Explorer and Terminal share these associations. No database reset or schema migration was required.
+
+`src/core/media` provides validated collection/progress/bookmark preferences, Blob URL lifecycle, metadata extraction, photo rendering and native project validation. Collections reference stable IDs; binary media stays in the filesystem. Libraries use live metadata and image thumbnails are generated only when approaching the viewport.
+
+Music owns one audio element per single application instance, with Web Audio frequency visualization and Media Session play/pause. Minimized windows remain mounted. Cinema owns its video element and persists positions at intervals and on pause/close. Both report decoding/autoplay errors.
+
+Photos renders adjustments into a Canvas before saving/exporting copies. Canvas uses Fabric object layers, embedded images, versioned JSON projects and revision-checked saves. Project validation rejects external image sources. Dirty-close protection reuses desktop close guards. History is bounded by snapshot count and size.
+
+PDF.js workers, CMaps, fonts and WASM assets are bundled locally. Page rendering uses viewport observers and cancels obsolete tasks. Text layers support selection and search; bookmarks and progress remain app metadata linked to source IDs. Original PDF printing uses the browser viewer.

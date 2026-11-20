@@ -144,7 +144,7 @@ export class Filesystem {
     if (!c) throw Error("File content is unavailable.");
     return c.blob;
   }
-  async readDocument(id: string) {
+  async readDocument(id: string, maxBytes = 2 * 1024 * 1024) {
     return this.database.transaction(
       "r",
       this.database.entries,
@@ -153,8 +153,8 @@ export class Filesystem {
         const entry = await this.getEntry(id);
         if (entry.trashed) throw Error("This document is in Trash.");
         const blob = await this.getFileContent(id);
-        if (blob.size > 2 * 1024 * 1024)
-          throw Error("Editors support files up to 2 MB.");
+        if (blob.size > maxBytes)
+          throw Error("This document exceeds the editor size limit.");
         return { entry, blob };
       },
     );

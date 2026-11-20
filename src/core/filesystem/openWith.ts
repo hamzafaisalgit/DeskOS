@@ -1,9 +1,21 @@
 ﻿import { useDesk } from "../store";
+import type { AppId } from "../registry";
 import type { Entry } from "./types";
 import { fileHandler } from "./associations";
-export function compatibleApps(e: Entry): ("notes" | "code")[] {
-  if (e.kind !== "file" || fileHandler(e) !== "text") return [];
-  return /^(md|txt|markdown)$/.test(e.extension) ? ["notes", "code"] : ["code"];
+export function compatibleApps(e: Entry): AppId[] {
+  if (e.kind !== "file") return [];
+  if (e.extension === "deskcanvas") return ["canvas"];
+  const handler = fileHandler(e);
+  if (handler === "audio") return ["music"];
+  if (handler === "video") return ["cinema"];
+  if (handler === "image")
+    return e.extension === "gif" ? ["photos"] : ["photos", "canvas"];
+  if (handler === "pdf") return ["pdf"];
+  if (handler === "text")
+    return /^(md|txt|markdown)$/.test(e.extension)
+      ? ["notes", "code"]
+      : ["code"];
+  return [];
 }
 export function openDocument(e: Entry) {
   const app = compatibleApps(e)[0];

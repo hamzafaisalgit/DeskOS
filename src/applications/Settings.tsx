@@ -1,3 +1,4 @@
+import { useMediaState } from "../core/media/state";
 import { StorageSettings } from "./files/StorageSettings";
 import { useState } from "react";
 import { Palette, Monitor, PanelBottom, AppWindow, Info } from "lucide-react";
@@ -6,6 +7,7 @@ import { wallpapers } from "../core/wallpapers";
 import { apps } from "../core/registry";
 export function SettingsApp() {
   const p = useDesk((s) => s.prefs);
+  const media = useMediaState();
   const set = useDesk((s) => s.setPrefs);
   const notify = useDesk((s) => s.notify);
   const [tab, setTab] = useState("Appearance");
@@ -43,6 +45,7 @@ export function SettingsApp() {
           ["Windows", AppWindow],
           ["System", Info],
           ["Storage", Monitor],
+          ["Media", Palette],
         ].map(([name, Icon]) => {
           const I = Icon as typeof Palette;
           return (
@@ -62,6 +65,59 @@ export function SettingsApp() {
         <h2>{tab}</h2>
         <p className="muted">A desktop that feels like you.</p>
         {tab === "Storage" && <StorageSettings />}
+        {tab === "Media" && (
+          <>
+            <h3>Playback & creation</h3>
+            <label className="setting-row">
+              <span>Default playback volume</span>
+              <input
+                aria-label="Default playback volume"
+                type="range"
+                min="0"
+                max="1"
+                step=".05"
+                value={Number(media.preferences.volume ?? 0.7)}
+                onChange={(e) =>
+                  media.preference("volume", Number(e.target.value))
+                }
+              />
+            </label>
+            <label className="setting-row">
+              <span>Photo JPEG / WebP quality</span>
+              <input
+                aria-label="Photo export quality"
+                type="range"
+                min=".3"
+                max="1"
+                step=".05"
+                value={Number(media.preferences.photoQuality ?? 0.92)}
+                onChange={(e) =>
+                  media.preference("photoQuality", Number(e.target.value))
+                }
+              />
+            </label>
+            <label className="setting-row">
+              <span>Default PDF zoom</span>
+              <select
+                value={Number(media.preferences.pdfZoom ?? 1)}
+                onChange={(e) =>
+                  media.preference("pdfZoom", Number(e.target.value))
+                }
+              >
+                {[0.5, 0.75, 1, 1.25, 1.5, 2].map((v) => (
+                  <option key={v} value={v}>
+                    {Math.round(v * 100)}%
+                  </option>
+                ))}
+              </select>
+            </label>
+            <p className="muted">
+              Playback volume and PDF zoom apply when an application is opened.
+              Reduced motion also controls the live music visualizer.
+            </p>
+          </>
+        )}
+
         {tab === "Appearance" && (
           <>
             <h3>Theme</h3>

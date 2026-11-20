@@ -31,3 +31,12 @@
 - Share files through existing Dexie services and stable IDs, including shell commands and Explorer quick editing.
 - Preview only saved static browser projects in an opaque-origin iframe with restrictive CSP. No host shell, backend, compiler, npm runtime or parent-page bridge.
 - Add three focused unit tests and two integration workflows; adapt existing regression tests for explicit saves and file associations.
+
+## Phase 4 decisions
+
+- Use browser audio/video decoding and honest format errors. Keep media playback within existing window lifecycle; minimize preserves Music, close stops it.
+- Use PDF.js for rendered pages/text and Fabric.js for practical editable vector objects. Read embedded audio tags with music-metadata. All engines load lazily.
+- Store playlists, albums, bookmarks, progress and small preferences in existing versioned storage; retain binary content in the shared filesystem.
+- Save photo edits as copies. Use revision conflicts for native Canvas saves and bounded snapshots for history.
+- Use object layers for Canvas. Erasing creates compositing strokes; this is not a full raster-layer painting engine.
+- Bundle PDF support assets locally with their license; no CDN dependency. Browser PDF printing is the fallback workflow.
