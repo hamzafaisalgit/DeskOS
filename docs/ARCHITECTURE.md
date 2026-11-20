@@ -36,3 +36,13 @@ Music owns one audio element per single application instance, with Web Audio fre
 Photos renders adjustments into a Canvas before saving/exporting copies. Canvas uses Fabric object layers, embedded images, versioned JSON projects and revision-checked saves. Project validation rejects external image sources. Dirty-close protection reuses desktop close guards. History is bounded by snapshot count and size.
 
 PDF.js workers, CMaps, fonts and WASM assets are bundled locally. Page rendering uses viewport observers and cancels obsolete tasks. Text layers support selection and search; bookmarks and progress remain app metadata linked to source IDs. Original PDF printing uses the browser viewer.
+
+## Phase 5 Spaces
+
+The existing Zustand desktop store owns Space metadata, active Space, window ownership, snapshots and templates. Windows retain their instance IDs when moved. Inactive windows stay mounted and use display:none, preserving application state. Focus activates the owning Space; single-instance apps remain global. Alt+Tab, Show Desktop and arrangement actions operate on the active Space.
+
+The versioned deskos.v1.spaces.v1 record adds Space metadata/layouts without changing IndexedDB or resetting legacy data. Legacy windows migrate into Desktop 1. Invalid ownership falls back to the first valid Space. Space persistence is debounced and flushed on pagehide; window geometry uses existing drag/resize completion commits.
+
+The overview renders lightweight app-name/geometry representations instead of cloning engines or capturing document content. Context menus and selects provide alternatives to drag-and-drop. Snapshot restoration matches existing IDs or app/file references, keeps unrelated windows, validates file references and opens only eligible missing apps. Templates store launch/layout references, never file content. Deletion defaults to moving windows; close mode invokes existing dirty-close guards and retains the Space if windows remain.
+
+All desktop shortcuts/files are shared across Spaces. Appearance is per Space with optional accent. Settings and global commands expose the same centralized actions.

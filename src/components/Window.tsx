@@ -40,6 +40,8 @@ export function DesktopWindow({
   onMenu: (e: React.MouseEvent, id: string) => void;
 }) {
   const active = useDesk((s) => s.active === w.id);
+  const spaceVisible = useDesk((s) => s.activeSpace === w.spaceId);
+  const [picker, setPicker] = useState(false);
   const snapping = useDesk((s) => s.prefs.snapping);
   const [v, setV] = useState(viewport);
   useEffect(() => {
@@ -53,7 +55,10 @@ export function DesktopWindow({
   return (
     <Rnd
       className={`window ${active ? "active" : ""}`}
-      style={{ zIndex: index + 10, display: w.minimized ? "none" : undefined }}
+      style={{
+        zIndex: index + 10,
+        display: w.minimized || !spaceVisible ? "none" : undefined,
+      }}
       position={w.maximized ? { x: 0, y: 0 } : { x: w.x, y: w.y }}
       size={w.maximized ? v : { width: w.width, height: w.height }}
       minWidth={Math.min(app.minWidth, v.width)}
@@ -102,6 +107,49 @@ export function DesktopWindow({
           </span>
           <span>{app.name}</span>
           <div className="window-controls">
+            {snapping && (
+              <button
+                aria-label={"Arrange " + app.name}
+                onClick={() => setPicker(!picker)}
+              >
+                ?
+              </button>
+            )}
+            {picker && (
+              <div className="snap-picker">
+                {(
+                  [
+                    "left",
+                    "right",
+                    "top",
+                    "bottom",
+                    "top-left",
+                    "top-right",
+                    "bottom-left",
+                    "bottom-right",
+                  ] as const
+                ).map((side) => (
+                  <button
+                    key={side}
+                    onClick={() => {
+                      s().snap(w.id, side);
+                      setPicker(false);
+                    }}
+                  >
+                    {side}
+                  </button>
+                ))}
+                <button
+                  onClick={() => {
+                    s().maximize(w.id);
+                    setPicker(false);
+                  }}
+                >
+                  Restore / max
+                </button>
+                <button onClick={() => setPicker(false)}>Cancel</button>
+              </div>
+            )}
             {snapping && (
               <>
                 <button

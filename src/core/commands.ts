@@ -1,4 +1,4 @@
-﻿import { useDesk } from "./store";
+import { useDesk } from "./store";
 export type CommandEntry = {
   id: string;
   name: string;
@@ -8,6 +8,45 @@ export type CommandEntry = {
 export function systemCommands(): CommandEntry[] {
   const s = useDesk.getState;
   return [
+    {
+      id: "spaces",
+      name: "Open Spaces overview",
+      group: "Spaces",
+      run: () => useDesk.setState({ overview: true }),
+    },
+    {
+      id: "new-space",
+      name: "Create Space",
+      group: "Spaces",
+      run: () => {
+        s().createSpace("Desktop " + (s().spaces.length + 1));
+      },
+    },
+    {
+      id: "save-workspace",
+      name: "Save workspace snapshot",
+      group: "Spaces",
+      run: () =>
+        s().saveLayout(
+          s().spaces.find((x) => x.id === s().activeSpace)!.name,
+          "snapshot",
+        ),
+    },
+    ...s().spaces.map((space) => ({
+      id: "space-" + space.id,
+      name: "Switch to " + space.name,
+      group: "Spaces",
+      run: () => s().switchSpace(space.id),
+    })),
+    ...(["cascade", "side", "grid", "center", "bounds"] as const).map(
+      (mode) => ({
+        id: "arrange-" + mode,
+        name: "Arrange windows: " + mode,
+        group: "Window actions",
+        run: () => s().arrange(mode),
+      }),
+    ),
+
     {
       id: "theme",
       name: "Switch theme",

@@ -137,3 +137,21 @@ Practical limits:
 - Verification used Chrome. Broader browser/accessibility/performance validation remains Phase 8.
 
 No manual migration or other setup is required after npm install. Import personal media through Files or each application's Import control. Next implementation phase: Phase 5.
+
+## Phase 5: Spaces, multitasking and workspace intelligence (2026-11-20)
+
+Implemented stable Space metadata, default Desktop 1 migration, per-window ownership, create/rename/reorder/delete/move, per-Space wallpaper/accent and retained mounted applications during switching. Desktop shortcuts/files remain shared. Dock focus follows applications across Spaces; single-instance policies remain global.
+
+The Spaces overview shows real window geometry and application labels, counts, active/minimized state, wallpaper previews and keyboard focus. Space and window dragging have button/select alternatives. Title-bar and dock menus move windows or move-and-follow. The taskbar switcher, global commands, Settings and Ctrl+Alt navigation use centralized actions.
+
+Added half/quadrant snapping, a title-bar picker, cascade, side-by-side, grid, centering and bounds recovery. Unsupported snap sizes report application minimum constraints; dense tiling may overlap rather than shrink apps below usable sizes.
+
+Named snapshots and custom templates support rename, duplicate, delete and restoration. Built-in Developer, Study, Creative and Entertainment layouts create real Spaces/apps. Layout-only restores matching instances; layout-and-windows opens eligible missing apps additively. Existing windows and dirty buffers are preserved. Missing files and global single-instance conflicts generate warnings. Templates reference files rather than copying them.
+
+Space persistence is debounced/flushed on pagehide. Legacy windows migrate safely; invalid Space ownership falls back to a valid desktop. Window restoration follows the existing setting and validates saved file references. No IndexedDB schema change, reset or new dependency.
+
+Verification: TypeScript/Vite production build, ESLint and 41 unit/service tests pass. Three new focused tests cover ownership/movement/deletion, layout restoration and invalid metadata fallback. A browser workflow verifies unsaved editor preservation across switching/movement, snapshot restoration and reload. All 18 Chrome browser tests passed against the production build, including prior desktop/document/media regressions. Screenshot: phase5-spaces.png.
+
+Known limits: 24 Spaces, 80 restored windows, 100 saved layouts. Single-instance apps remain in their original Spaces when already open; templates skip these with feedback. Restoration keeps unrelated windows and never restores unsaved buffers. Overview previews display geometry/app labels without private document content. Heavy apps remain mounted, so many open engines can use significant memory; hidden PDF page visibility follows existing viewport observation. Browser/OS shortcuts may take precedence. Desktop files/shortcuts are shared. Existing large Monaco bundle warnings remain. No multi-monitor control or Phase 6 backup features.
+
+Main files: src/core/store.ts, src/core/spaces/model.ts, src/components/spaces/, Window.tsx, App.tsx, shortcuts.ts, commands.ts and Settings.tsx. No dependencies added. No manual migration required.

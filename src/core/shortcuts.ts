@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react";
+import { useEffect } from "react";
 import { useDesk } from "./store";
 export function useShortcuts(palette: () => void, dismiss: () => void) {
   useEffect(() => {
@@ -9,6 +9,28 @@ export function useShortcuts(palette: () => void, dismiss: () => void) {
         e.preventDefault();
         palette();
       } else if (e.ctrlKey && e.altKey) {
+        if (["ArrowLeft", "ArrowRight"].includes(e.key)) {
+          e.preventDefault();
+          const i = s.spaces.findIndex((x) => x.id === s.activeSpace);
+          s.switchSpace(
+            s.spaces[
+              (i + (e.key === "ArrowRight" ? 1 : s.spaces.length - 1)) %
+                s.spaces.length
+            ].id,
+          );
+          return;
+        }
+        if (/^[1-9]$/.test(e.key)) {
+          e.preventDefault();
+          const space = s.spaces[Number(e.key) - 1];
+          if (space) s.switchSpace(space.id);
+          return;
+        }
+        if (e.key.toLowerCase() === "o") {
+          e.preventDefault();
+          useDesk.setState({ overview: !s.overview });
+          return;
+        }
         const app = { t: "terminal", n: "notes", s: "settings" }[
           e.key.toLowerCase()
         ] as "terminal" | "notes" | "settings" | undefined;
@@ -21,7 +43,9 @@ export function useShortcuts(palette: () => void, dismiss: () => void) {
         }
       } else if (e.key === "Escape") dismiss();
       else if (e.altKey && e.key === "Tab") {
-        const windows = s.windows.filter((w) => !w.minimized);
+        const windows = s.windows.filter(
+          (w) => w.spaceId === s.activeSpace && !w.minimized,
+        );
         if (windows.length) {
           e.preventDefault();
           const i = windows.findIndex((w) => w.id === s.active);

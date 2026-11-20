@@ -1,3 +1,5 @@
+import { filesystem } from "./core/filesystem/service";
+import { SpaceSwitcher, SpacesOverview } from "./components/spaces/Spaces";
 import { DesktopFiles } from "./components/DesktopFiles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties, MouseEvent } from "react";
@@ -105,6 +107,35 @@ export default function App() {
   useShortcuts(palette, dismiss);
   useEffect(() => {
     const s = useDesk.getState;
+    const original = s().windows.filter((w) => w.entryId);
+    let alive = true;
+    void filesystem
+      .initialize()
+      .then(async () => {
+        let missing = 0;
+        for (const w of original) {
+          try {
+            const e = await filesystem.getEntry(w.entryId!);
+            if (e.trashed) throw Error("Trashed");
+          } catch {
+            if (!alive) return;
+            missing++;
+            useDesk.setState((state) => ({
+              windows: state.windows.map((x) =>
+                x.id === w.id && x.entryId === w.entryId
+                  ? { ...x, entryId: undefined }
+                  : x,
+              ),
+            }));
+          }
+        }
+        if (alive && missing)
+          s().notify(
+            "Some restored files are missing or in Trash. Their applications opened without those documents.",
+            "warning",
+          );
+      })
+      .catch(() => {});
     const m = matchMedia("(prefers-color-scheme: dark)");
     const change = () => setSystemDark(m.matches);
     m.addEventListener("change", change);
@@ -123,6 +154,7 @@ export default function App() {
     if (storageProblem) s().notify(storageProblem, "warning");
     if (s().windows.length) s().notify("Window arrangement restored", "info");
     return () => {
+      alive = false;
       m.removeEventListener("change", change);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("deskos-storage-error", storageError);
@@ -167,12 +199,16 @@ export default function App() {
       },
     ]);
   }
+  const allSpaces = useDesk((state) => state.spaces);
+  const activeSpaceId = useDesk((state) => state.activeSpace);
+  const overviewOpen = useDesk((state) => state.overview);
+  const currentSpace = allSpaces.find((x) => x.id === activeSpaceId)!;
   const dockApps = [...new Set([...p.pinned, ...windows.map((w) => w.appId)])];
   const v = viewport();
   return (
     <main
       className={`desktop ${p.theme === "light" || (p.theme === "system" && !systemDark) ? "light" : ""} ${!p.transparent ? "opaque" : ""} ${p.reducedMotion || !p.animations ? "no-motion" : ""}`}
-      style={{ "--accent": p.accent } as CSSProperties}
+      style={{ "--accent": currentSpace.accent || p.accent } as CSSProperties}
     >
       <div className="wallpaper">
         {wallpapers.map((wallpaper, i) => (
@@ -181,7 +217,7 @@ export default function App() {
             className="wallpaper-layer"
             style={{
               background: wallpaper.background,
-              opacity: p.wallpaper === i ? 1 : 0,
+              opacity: currentSpace.wallpaper === i ? 1 : 0,
             }}
           />
         ))}
@@ -377,6 +413,7 @@ export default function App() {
         </span>
       </div>
       <nav className={`dock ${p.dock}`} aria-label="Taskbar">
+        <SpaceSwitcher />
         <button
           className="launcher-button"
           aria-label="Open application launcher"
@@ -431,7 +468,13 @@ export default function App() {
                 {running.slice(0, 4).map((w) => (
                   <i
                     key={w.id}
-                    className={w.id === active ? "active-dot" : ""}
+                    className={
+                      w.id === active
+                        ? "active-dot"
+                        : w.spaceId !== activeSpaceId
+                          ? "other-space-dot"
+                          : ""
+                    }
                   />
                 ))}
               </div>
@@ -439,7 +482,8 @@ export default function App() {
                 <div className="window-list">
                   {running.map((w, i) => (
                     <button key={w.id} onClick={() => s().focus(w.id)}>
-                      {a.name} {i + 1}
+                      {a.name} {i + 1} /{" "}
+                      {s().spaces.find((x) => x.id === w.spaceId)?.name}
                       {w.minimized ? " · minimized" : ""}
                     </button>
                   ))}
@@ -480,6 +524,7 @@ export default function App() {
         </FocusPanel>
       )}
       <Toasts />
+      {overviewOpen && <SpacesOverview />}
     </main>
   );
 }

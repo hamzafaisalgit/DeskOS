@@ -101,6 +101,9 @@ test("notes save, reload and cancel or confirm Trash", async ({ page }) => {
     .getByRole("textbox", { name: "Note text" })
     .fill("A real saved thought.");
   await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(
+    page.getByText("Saved to filesystem", { exact: false }),
+  ).toBeVisible();
   await page.reload();
   await expect(page.getByRole("textbox", { name: "Note text" })).toHaveValue(
     "A real saved thought.",

@@ -40,3 +40,12 @@
 - Save photo edits as copies. Use revision conflicts for native Canvas saves and bounded snapshots for history.
 - Use object layers for Canvas. Erasing creates compositing strokes; this is not a full raster-layer painting engine.
 - Bundle PDF support assets locally with their license; no CDN dependency. Browser PDF printing is the fallback workflow.
+
+## Phase 5 decisions
+
+- Extend the existing window store rather than introduce another window manager. Use stable Space IDs and retain mounted app instances across switching.
+- Keep single-instance applications global. Dock focus switches to their owning Space; templates skip conflicting instances with feedback.
+- Restore layouts additively, preserving existing/dirty windows. Layout records contain saved file references and geometry, not unsaved buffers.
+- Use lightweight actual geometry previews with app labels; avoid document snapshots and duplicate heavy engines.
+- Preserve shared Desktop files/shortcuts. Store Space appearance separately from global preferences and support applying wallpaper to all Spaces.
+- Bound Spaces/layouts/restored windows and adapt dense arrangement to application minima. Unsupported snap sizes report the limitation.

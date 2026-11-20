@@ -46,6 +46,7 @@ export function SettingsApp() {
           ["System", Info],
           ["Storage", Monitor],
           ["Media", Palette],
+          ["Spaces", Monitor],
         ].map(([name, Icon]) => {
           const I = Icon as typeof Palette;
           return (
@@ -64,6 +65,32 @@ export function SettingsApp() {
         <small>SETTINGS</small>
         <h2>{tab}</h2>
         <p className="muted">A desktop that feels like you.</p>
+        {tab === "Spaces" && (
+          <>
+            <h3>Spaces & workspaces</h3>
+            <p>
+              Each Space has its own windows, wallpaper and optional accent.
+              Desktop shortcuts and virtual Desktop files are shared across
+              Spaces.
+            </p>
+            <button
+              className="primary"
+              onClick={() => useDesk.setState({ overview: true })}
+            >
+              Manage Spaces, snapshots and templates
+            </button>
+            <p>
+              Ctrl+Alt+Left/Right switches Spaces. Ctrl+Alt+1 through 9 selects
+              a Space. Ctrl+Alt+O opens the overview. Browser or
+              operating-system shortcuts may take precedence.
+            </p>
+            <p>
+              Session restoration uses the Windows restore-session setting.
+              Saved files reopen; unsaved buffers are not recovered after
+              reload.
+            </p>
+          </>
+        )}
         {tab === "Storage" && <StorageSettings />}
         {tab === "Media" && (
           <>

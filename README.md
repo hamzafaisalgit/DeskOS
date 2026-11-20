@@ -33,7 +33,7 @@ Browser tests default to installed Google Chrome (`channel: 'chrome'` in playwri
 
 ## Integrated desktop
 
-Phases 1-4 provide window management, themes, desktop shortcuts, Files, filesystem-backed Notes, DeskShell, Code Studio and Calculator. All document apps share the same IndexedDB files. Right-click files in Explorer or on the desktop to choose **Open with**. Explorer also retains its quick preview editor.
+Phases 1-5 provide window management, themes, desktop shortcuts, Files, filesystem-backed Notes, DeskShell, Code Studio and Calculator. All document apps share the same IndexedDB files. Right-click files in Explorer or on the desktop to choose **Open with**. Explorer also retains its quick preview editor.
 
 Notes edits plain text or Markdown, with formatting tools, a reading view, favorites, recent files, search and export. Use **Copy legacy notes to Documents** to copy original scratchpads into files; originals are retained. Save explicitly with Ctrl/Cmd+S. Dirty tabs prompt before closing, and conflicting saves require Reload or Save As.
 
@@ -69,3 +69,15 @@ Web preview supports static HTML, inline or relative linked CSS, classic scripts
 See [architecture](docs/ARCHITECTURE.md), [progress](docs/PROGRESS.md) and [roadmap](docs/ROADMAP.md). No manual migration is required to use new files; legacy note copying is optional.
 
 Media decoding depends on browser codecs. Audio tags are read locally on request in batches of 200 tracks. No remote artwork or fake library items are added. WebVTT is supported; SRT and embedded subtitle extraction are not. PDF search does not perform OCR. Photo processing caps output at 4096 pixels on its longest side and accepts images below 40 MB/40 megapixels. Animated GIF browsing is preserved, but edited GIF output is a still image. Canvas uses vector objects as layers; eraser strokes composite across lower objects. Canvas documents are limited to 4096 x 4096, projects to 24 MB and history to 20 snapshots/32 MB. Unsaved edits do not survive browser reload. External storage backups remain the user's responsibility.
+
+## Spaces and workspaces
+
+Use the Space switcher in the dock or Ctrl+Alt+O to open the overview. Create, rename, reorder or duplicate Spaces; choose independent wallpapers/accents; drag actual window representations between Spaces or use the title-bar/dock context menu. All application instances stay mounted while switching, including unsaved editors and music playback. Desktop shortcuts and virtual Desktop files are shared across Spaces.
+
+Ctrl+Alt+Left/Right switches Spaces; Ctrl+Alt+1 through 9 selects a Space. Browser and operating-system shortcuts can take precedence. The global search also offers Space and arrangement commands.
+
+Arrange windows with cascade, grid, side-by-side, center and bounds recovery, or use the title-bar arrangement picker for half/quadrant snaps. Snaps too small for an app show a warning. Dense tiling adapts to application minimum sizes and may overlap.
+
+Save named snapshots or custom templates in the overview. Built-in Developer, Study, Creative and Entertainment templates create new Spaces with real applications. Globally single-instance apps already running elsewhere stay in their existing Space and are not duplicated. Layout-only restore repositions matching current windows; layout + windows also opens eligible missing apps. Existing windows remain open, and document contents are never restored from a layout. Missing files open no document and produce a warning.
+
+Spaces, ordering, appearance and layouts persist locally. Window restoration follows Settings > Windows. Unsaved buffers are not recovered after refresh. Up to 24 Spaces, 80 restored windows and 100 saved layouts are supported. Layouts are not file backups; Phase 6 remains unimplemented.
