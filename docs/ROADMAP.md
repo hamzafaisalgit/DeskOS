@@ -5,8 +5,8 @@
 3. **Core Integrated Applications — implemented.** Shared-file Notes, fuller Terminal, Code Studio, integrated Calculator and scratchpad migration.
 4. **Creative & Media Suite — implemented.** Music, Photos, Video, PDF, Canvas and filesystem integrations.
 5. **Spaces — implemented.** Named desktops, per-space layouts, supported app sessions and snapshots.
-6. **Portability and Recovery — not started.** Validated Capsule backups, revisions, restore points, migrations and Time Machine.
+6. **Portability and Recovery — implemented.** Validated Capsule backups, revisions, restore points, migrations and Time Machine.
 7. **Application Platform — not started.** App Center, SDK, isolated applications and capability permissions.
 8. **Production Readiness — not started.** Broader cross-browser/accessibility/performance testing, PWA, storage hardening and deployment readiness.
 
-The next implementation phase is Phase 6. Do not introduce a parallel filesystem inside any application.
+The next implementation phase is Phase 7. Do not introduce a parallel filesystem inside any application.

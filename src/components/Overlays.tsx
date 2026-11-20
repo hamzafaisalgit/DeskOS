@@ -1,3 +1,4 @@
+import { useDesk } from "../core/store";
 import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
@@ -44,7 +45,9 @@ export function FocusPanel({
     root.addEventListener("keydown", key);
     return () => {
       root.removeEventListener("keydown", key);
-      before?.focus();
+      const owner =
+        before?.closest<HTMLElement>("[data-window-id]")?.dataset.windowId;
+      if (!owner || useDesk.getState().active === owner) before?.focus();
     };
   }, []);
   return createPortal(

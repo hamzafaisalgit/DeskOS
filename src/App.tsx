@@ -1,3 +1,4 @@
+import { db } from "./core/filesystem/database";
 import { filesystem } from "./core/filesystem/service";
 import { SpaceSwitcher, SpacesOverview } from "./components/spaces/Spaces";
 import { DesktopFiles } from "./components/DesktopFiles";
@@ -112,6 +113,14 @@ export default function App() {
     void filesystem
       .initialize()
       .then(async () => {
+        const interrupted = (await db.journals.toArray()).some(
+          (j) => j.state !== "complete",
+        );
+        if (alive && interrupted)
+          s().notify(
+            "A restore journal needs attention. Open Recovery Center to inspect status and available checkpoints.",
+            "warning",
+          );
         let missing = 0;
         for (const w of original) {
           try {

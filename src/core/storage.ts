@@ -1,3 +1,7 @@
+export let persistencePaused = false;
+export const setPersistencePaused = (value: boolean) => {
+  persistencePaused = value;
+};
 export let storageProblem = "";
 export function readStorage(key: string): unknown {
   try {
@@ -8,6 +12,7 @@ export function readStorage(key: string): unknown {
   }
 }
 export function writeStorage(key: string, value: unknown) {
+  if (persistencePaused) return false;
   try {
     localStorage.setItem(`deskos.v1.${key}`, JSON.stringify(value));
     return true;

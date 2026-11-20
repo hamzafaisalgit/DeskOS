@@ -33,7 +33,7 @@ Browser tests default to installed Google Chrome (`channel: 'chrome'` in playwri
 
 ## Integrated desktop
 
-Phases 1-5 provide window management, themes, desktop shortcuts, Files, filesystem-backed Notes, DeskShell, Code Studio and Calculator. All document apps share the same IndexedDB files. Right-click files in Explorer or on the desktop to choose **Open with**. Explorer also retains its quick preview editor.
+Phases 1-6 provide window management, themes, desktop shortcuts, Files, filesystem-backed Notes, DeskShell, Code Studio and Calculator. All document apps share the same IndexedDB files. Right-click files in Explorer or on the desktop to choose **Open with**. Explorer also retains its quick preview editor.
 
 Notes edits plain text or Markdown, with formatting tools, a reading view, favorites, recent files, search and export. Use **Copy legacy notes to Documents** to copy original scratchpads into files; originals are retained. Save explicitly with Ctrl/Cmd+S. Dirty tabs prompt before closing, and conflicting saves require Reload or Save As.
 
@@ -81,3 +81,21 @@ Arrange windows with cascade, grid, side-by-side, center and bounds recovery, or
 Save named snapshots or custom templates in the overview. Built-in Developer, Study, Creative and Entertainment templates create new Spaces with real applications. Globally single-instance apps already running elsewhere stay in their existing Space and are not duplicated. Layout-only restore repositions matching current windows; layout + windows also opens eligible missing apps. Existing windows remain open, and document contents are never restored from a layout. Missing files open no document and produce a warning.
 
 Spaces, ordering, appearance and layouts persist locally. Window restoration follows Settings > Windows. Unsaved buffers are not recovered after refresh. Up to 24 Spaces, 80 restored windows and 100 saved layouts are supported. Layouts are not file backups; Phase 6 remains unimplemented.
+
+## Capsule, Time Machine and Recovery Center
+
+Open these utilities from the launcher, global search or Settings > Recovery. Explorer file menus open history or restrict a Capsule to that file/folder.
+
+Capsule creates ZIP-compatible `.deskpack` files with a versioned manifest, actual binary files and SHA-256 checksums. Choose supported categories, review the scope, then generate the download. A download being initiated does not verify that it was saved to your computer. Capsules are unencrypted; checksums detect corruption, not sender identity.
+
+Imports inspect the package before planning changes. File merge preserves existing content, assigns fresh imported IDs, merges matching directories, and either renames or skips name collisions. Select individual files using the archive tree. Settings/application metadata are explicitly replace-only; they are not universally merged. Full replacement retains archived IDs and supports file cross-references. Missing imported file references are removed where supported and reported. Merge restores imported Trash files as ordinary live files; full filesystem replacement preserves archived Trash metadata.
+
+Replacement requires confirmation and a verified automatic checkpoint. It uses an IndexedDB transaction for filesystem records and a recovery journal plus compensating rollback for localStorage. These stores cannot be updated atomically together. Save/close dirty editors before restoring. During application, writes are paused; restoring settings requires the **Reload DeskOS** button. Avoid simultaneous restores or writes in another browser tab.
+
+Time Machine captures previous committed text content up to 2 MB; it does not snapshot every keystroke. Compare a retained version with current saved content, restore it through revision-checked saves, or recover a separate copy. Unsaved buffers are never silently replaced. Version history survives Trash and permanent file deletion until retention/cleanup removes it. Restore points contain independent archived bytes and are unaffected by version cleanup.
+
+Defaults: 10 versions per file, up to 30 configurable, a 50 MB global version cap, 250 MB restore-point cap, and a 100 MB compressed/expanded Capsule limit. Oldest eligible versions are pruned at saves. Restore points are manually deleted with confirmation. Large backups must be split into smaller exports. Local recovery data shares browser storage and cannot protect against site-data deletion or device loss. Export independent copies.
+
+Coverage: virtual file metadata/content/favorites/Trash, persisted system/appearance preferences, Spaces/order/layouts/templates/snapshots/window references, legacy scratchpads, media collections/resume/PDF bookmarks/preferences/tag cache, calculator history and editor/Explorer preferences. Saved Notes/code/Canvas documents and imported media are files. Fixed wallpapers and associations are bundled application code. Historical version blobs, local restore-point archives/journals, unsaved buffers, runtime playback/Terminal scrollback, transient UI, Blob URLs, credentials and browser/host data are excluded. Historical archives can be downloaded individually from Restore Points.
+
+See docs/ARCHITECTURE.md for the archive schema, coverage registry and restore safety model. No account, server, encryption, scheduled/background backup or remote upload is involved.

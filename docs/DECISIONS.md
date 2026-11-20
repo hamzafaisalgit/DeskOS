@@ -49,3 +49,14 @@
 - Use lightweight actual geometry previews with app labels; avoid document snapshots and duplicate heavy engines.
 - Preserve shared Desktop files/shortcuts. Store Space appearance separately from global preferences and support applying wallpaper to all Spaces.
 - Bound Spaces/layouts/restored windows and adapt dense arrangement to application minima. Unsupported snap sizes report the limitation.
+
+## Phase 6 decisions
+
+- Add version/point/journal tables to the existing Dexie database with a non-destructive schema upgrade.
+- Retain prior text at committed shared saves; use a count and byte budget. Keep immutable point archives independent from version pruning.
+- Use a registry of actual persistence keys. Exclude historical archives from full Capsules to avoid recursive backups; individual points remain exportable.
+- Offer safe file-only merge and explicit replacement for metadata. Preserve original IDs during replacement; remapping all app metadata during file merge is intentionally unsupported and explained.
+- Validate ZIP metadata and bound streamed decompression, check graph integrity and SHA-256 bytes before plans/mutations.
+- Require a verified checkpoint for replacement, journal cross-storage progress and compensate failed writes. Never promise atomic localStorage/IndexedDB restoration.
+- Require dirty editors to be saved or closed. Pause mutation writes during application and require reload after settings replacement.
+- Omit optional encryption rather than represent ordinary ZIP compression as password protection.

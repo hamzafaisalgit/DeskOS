@@ -1,3 +1,8 @@
+let recoveryWriteLock = false;
+export const setRecoveryWriteLock = (value: boolean) => {
+  recoveryWriteLock = value;
+};
+import { capturePrevious } from "../history/capture";
 import { db, FileDatabase } from "./database";
 import { HOME, folders, folderId, validateName, mimeFor } from "./types";
 import type { Entry } from "./types";
@@ -7,10 +12,17 @@ export class Filesystem {
     this.database = database;
   }
   private transaction<T>(run: () => Promise<T>) {
+    if (recoveryWriteLock)
+      return Promise.reject<T>(
+        Error(
+          "Filesystem writes are paused for recovery. Wait for completion or reload restored settings.",
+        ),
+      );
     return this.database.transaction(
       "rw",
       this.database.entries,
       this.database.contents,
+      this.database.versions,
       run,
     );
   }
@@ -179,6 +191,7 @@ export class Filesystem {
         throw Error(
           "This file changed in another window. Reopen it before saving.",
         );
+      await capturePrevious(this.database, e, blob);
       await this.database.contents.put({ id, blob });
       await this.database.entries.update(id, {
         size: blob.size,
@@ -395,6 +408,8 @@ export class Filesystem {
     return e;
   }
   async favorite(id: string, value: boolean) {
+    if (recoveryWriteLock)
+      throw Error("Recovery is applying; wait before changing files.");
     await this.database.entries.update(id, { favorite: value });
   }
   async touch(id: string) {

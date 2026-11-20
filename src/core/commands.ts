@@ -9,6 +9,24 @@ export function systemCommands(): CommandEntry[] {
   const s = useDesk.getState;
   return [
     {
+      id: "recovery",
+      name: "Open Recovery Center",
+      group: "Recovery",
+      run: () => s().open("recovery"),
+    },
+    {
+      id: "capsule",
+      name: "Export DeskOS Capsule",
+      group: "Recovery",
+      run: () => s().open("capsule"),
+    },
+    {
+      id: "time-machine",
+      name: "Browse Time Machine",
+      group: "Recovery",
+      run: () => s().open("time-machine"),
+    },
+    {
       id: "spaces",
       name: "Open Spaces overview",
       group: "Spaces",

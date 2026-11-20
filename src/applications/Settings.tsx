@@ -47,6 +47,7 @@ export function SettingsApp() {
           ["Storage", Monitor],
           ["Media", Palette],
           ["Spaces", Monitor],
+          ["Recovery", Info],
         ].map(([name, Icon]) => {
           const I = Icon as typeof Palette;
           return (
@@ -65,6 +66,31 @@ export function SettingsApp() {
         <small>SETTINGS</small>
         <h2>{tab}</h2>
         <p className="muted">A desktop that feels like you.</p>
+        {tab === "Recovery" && (
+          <>
+            <h3>Capsule & Time Machine</h3>
+            <p>
+              Export portable backups, inspect imported packages, browse saved
+              text versions and manage verified restore points.
+            </p>
+            <button
+              className="primary"
+              onClick={() => useDesk.getState().open("recovery")}
+            >
+              Open Recovery Center
+            </button>
+            <button onClick={() => useDesk.getState().open("capsule")}>
+              Export Capsule
+            </button>
+            <button onClick={() => useDesk.getState().open("time-machine")}>
+              Time Machine
+            </button>
+            <p>
+              Local recovery points share this browser storage. Export important
+              backups to your computer.
+            </p>
+          </>
+        )}
         {tab === "Spaces" && (
           <>
             <h3>Spaces & workspaces</h3>

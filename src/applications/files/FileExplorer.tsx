@@ -328,6 +328,14 @@ export function FileExplorer() {
               })),
               { label: "Quick preview / edit", run: () => setPreview(item.id) },
               {
+                label: "View Version History",
+                run: () => useDesk.getState().open("time-machine", item.id),
+              },
+              {
+                label: "Include in Capsule backup",
+                run: () => useDesk.getState().open("capsule", item.id),
+              },
+              {
                 label: "Copy file path",
                 run: () =>
                   void fs

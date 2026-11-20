@@ -13,3 +13,5 @@ export function interceptClose(id: string) {
   }
   return false;
 }
+
+export const hasDirtyWindows = () => guards.size > 0;

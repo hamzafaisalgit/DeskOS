@@ -93,6 +93,7 @@ export function DesktopWindow({
       }
     >
       <section
+        data-window-id={w.id}
         className="window-inner"
         role="region"
         aria-label={`${app.name} window`}

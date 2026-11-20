@@ -155,3 +155,30 @@ Verification: TypeScript/Vite production build, ESLint and 41 unit/service tests
 Known limits: 24 Spaces, 80 restored windows, 100 saved layouts. Single-instance apps remain in their original Spaces when already open; templates skip these with feedback. Restoration keeps unrelated windows and never restores unsaved buffers. Overview previews display geometry/app labels without private document content. Heavy apps remain mounted, so many open engines can use significant memory; hidden PDF page visibility follows existing viewport observation. Browser/OS shortcuts may take precedence. Desktop files/shortcuts are shared. Existing large Monaco bundle warnings remain. No multi-monitor control or Phase 6 backup features.
 
 Main files: src/core/store.ts, src/core/spaces/model.ts, src/components/spaces/, Window.tsx, App.tsx, shortcuts.ts, commands.ts and Settings.tsx. No dependencies added. No manual migration required.
+
+## Phase 6: Capsule, Time Machine and data recovery (2026-11-21)
+
+Implemented Capsule export, validated import/restore planning, file-only merge, selected category replacement, file versions, manual/automatic verified restore points and Recovery Center. The three lazy utilities integrate with launcher/search, Settings and Explorer context menus.
+
+Capsules contain real metadata/binary file content in a schema-1 .deskpack ZIP with SHA-256 inventory, UTC creation time, category scope and actual counts/sizes. The coverage registry enumerates actual persisted storage keys and drives selection and validation. Export reports download initiation, not verified disk saving.
+
+Imports validate ZIP directory paths/counts/size limits, bound decompression, verify inventory/checksums, validate JSON and filesystem hierarchy/protected folders, then present a plan. Safe merge uses fresh IDs and deterministic rename/skip behavior without overwriting existing files. Metadata/settings are replace-only. Replacement requires confirmation, no dirty editors and a verified full supported checkpoint, uses a filesystem transaction plus journal/compensation for localStorage, pauses mutation writes during application and pauses preference persistence until reload. Interrupted/failed journals surface at startup and can be reviewed through Recovery Status.
+
+Database schema 2 adds versions, points and journals without resetting prior data. Eligible text writes retain previous content at saves, deduplicate unchanged content, cap per-file/global history and survive Trash/permanent deletion until retention removes them. Versions preview beside current text, restore through revision checks, or recover as independent copies. Restore points contain immutable actual archive bytes with accurate category scopes, descriptions and sizes; workspace-only points contain no promised file bytes.
+
+Verification:
+
+- Production TypeScript/Vite build and ESLint pass.
+- 45 unit/service tests pass, including four focused recovery tests: representative text/binary/preferences round-trip and point scope; corruption rejection without mutation; collision-safe merge/version restore with recoverable prior content; compensating rollback on a settings write failure.
+- Browser recovery smoke passes: real Capsule download, validated reimport, safe merge, historical copy restoration and verified workspace point creation.
+- All 19 Chrome browser tests passed against the production build, covering prior desktop/document/files/media/Spaces workflows and the new recovery smoke.
+- Fixed launcher overlay focus restoration so it cannot cover a newly opened application by refocusing its old owner.
+- Screenshot: phase6-recovery.png. No dependencies added.
+
+Coverage: virtual files/folders/binary content/Trash/favorites; system/appearance preferences; Spaces/order/layouts/templates/snapshots/window references; legacy scratchpads; media collections/resume/PDF bookmarks/preferences/tag cache; calculator history; editor/Explorer preferences; version retention. Fixed wallpaper assets and file associations are bundled application code. Saved Notes/code/Canvas and imported media are filesystem content.
+
+Exclusions/limits: Capsules are unencrypted and checksums do not authenticate senders. Runtime state, unsaved buffers, current playback/Terminal scrollback, temporary URLs, host/browser data, credentials and historical version/point/journal blobs are excluded; local points can be exported individually. No scheduled backup runs while closed. 100 MB compressed/expanded packages, 10,000 filesystem records, 8 MB JSON entries, 2 MB eligible text versions, default 10/max 30 versions per file, 50 MB global version cap and 250 MB point cap. Comparison previews cap at 2,000 lines/2,000 characters per line. Binary saves are not automatically versioned; explicit points retain real binary bytes.
+
+Metadata merge is intentionally unsupported. File merge imports Trash content as live files; replacement preserves archived Trash metadata. Missing imported metadata references are pruned/reported where supported. Cross-storage replacement is journaled/compensated rather than globally atomic. If rollback also fails, use the retained checkpoint. Avoid concurrent mutation from other browser tabs. Local points share site storage and are not protection against browser-data clearing or device loss. Reload after restoring settings. Existing large Monaco bundle warnings remain.
+
+Main files: src/core/backup/, src/core/history/, src/applications/recovery/, filesystem database/service, registry, storage pause control, dirty guards, Explorer/Settings/global commands and overlay focus handling. No manual migration/setup required; use the reload action after metadata restore. Phase 7 remains unimplemented.

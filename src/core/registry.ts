@@ -11,6 +11,9 @@ import {
   Clapperboard,
   BookOpen,
   Palette,
+  Archive,
+  History,
+  ShieldCheck,
 } from "lucide-react";
 export type AppId =
   | "files"
@@ -23,7 +26,10 @@ export type AppId =
   | "photos"
   | "cinema"
   | "pdf"
-  | "canvas";
+  | "canvas"
+  | "capsule"
+  | "time-machine"
+  | "recovery";
 export const apps = [
   {
     id: "files",
@@ -242,6 +248,66 @@ export const apps = [
     minWidth: 420,
     minHeight: 360,
     single: false,
+  },
+  {
+    id: "capsule",
+    name: "Capsule",
+    icon: Archive,
+    component: lazy(() =>
+      import("../applications/recovery/Recovery").then((m) => ({
+        default: m.CapsuleApp,
+      })),
+    ),
+    resizable: true,
+    supportedFileTypes: [] as string[],
+    category: "System",
+    description: "Portable backups of your local desktop",
+    color: "#91bfb5",
+    width: 1100,
+    height: 720,
+    minWidth: 420,
+    minHeight: 360,
+    single: true,
+  },
+  {
+    id: "time-machine",
+    name: "Time Machine",
+    icon: History,
+    component: lazy(() =>
+      import("../applications/recovery/Recovery").then((m) => ({
+        default: m.TimeMachineApp,
+      })),
+    ),
+    resizable: true,
+    supportedFileTypes: [] as string[],
+    category: "System",
+    description: "Explore saved versions and restore points",
+    color: "#91bfb5",
+    width: 1100,
+    height: 720,
+    minWidth: 420,
+    minHeight: 360,
+    single: true,
+  },
+  {
+    id: "recovery",
+    name: "Recovery Center",
+    icon: ShieldCheck,
+    component: lazy(() =>
+      import("../applications/recovery/Recovery").then((m) => ({
+        default: m.RecoveryApp,
+      })),
+    ),
+    resizable: true,
+    supportedFileTypes: [] as string[],
+    category: "System",
+    description: "Inspect backups and recover your work",
+    color: "#91bfb5",
+    width: 1100,
+    height: 720,
+    minWidth: 420,
+    minHeight: 360,
+    single: true,
   },
 ] as const;
 export const appById = (id: AppId) => apps.find((a) => a.id === id)!;
