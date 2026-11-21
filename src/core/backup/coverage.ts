@@ -1,5 +1,15 @@
+import { validatePlatform } from "../platform/package";
 import { readStorage } from "../storage";
 export const coverage = [
+  {
+    id: "applications",
+    name: "Installed packages & app data",
+    keys: ["platform.v1"],
+    merge: false,
+    dependencies: [],
+    description:
+      "Validated package resources, versions, app-owned data and lifecycle metadata. Restored apps are disabled; permission grants are removed.",
+  },
   {
     id: "files",
     name: "Virtual files, folders & Trash",
@@ -159,6 +169,10 @@ export function validateSetting(key: string, v: unknown) {
 }
 
 export function validateDeepSettings(key: string, v: unknown) {
+  if (key === "platform.v1") {
+    validatePlatform(v);
+    return;
+  }
   validateSetting(key, v);
   const value = v as Record<string, unknown>;
   if (

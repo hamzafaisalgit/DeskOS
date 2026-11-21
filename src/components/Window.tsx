@@ -2,7 +2,14 @@ import { LaunchContext } from "../core/launch";
 import { Component, Suspense, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Rnd } from "react-rnd";
-import { Minus, Maximize2, X, PanelLeft, PanelRight } from "lucide-react";
+import {
+  Minus,
+  Maximize2,
+  X,
+  PanelLeft,
+  PanelRight,
+  LayoutGrid,
+} from "lucide-react";
 import { appById } from "../core/registry";
 import { useDesk, viewport } from "../core/store";
 import type { WindowState } from "../core/store";
@@ -106,14 +113,14 @@ export function DesktopWindow({
           <span className="window-app-icon" style={{ color: app.color }}>
             <AppIcon id={w.appId} size={16} />
           </span>
-          <span>{app.name}</span>
+          <span>{w.title || app.name}</span>
           <div className="window-controls">
             {snapping && (
               <button
                 aria-label={"Arrange " + app.name}
                 onClick={() => setPicker(!picker)}
               >
-                ?
+                <LayoutGrid size={13} />
               </button>
             )}
             {picker && (
@@ -198,7 +205,7 @@ export function DesktopWindow({
               }
             >
               <LaunchContext.Provider
-                value={{ entryId: w.entryId, windowId: w.id }}
+                value={{ appId: w.appId, entryId: w.entryId, windowId: w.id }}
               >
                 <Content />
               </LaunchContext.Provider>

@@ -1,3 +1,4 @@
+import { validatePlatform } from "../platform/package";
 import { setRecoveryWriteLock } from "../filesystem/service";
 import { db } from "../filesystem/database";
 import { coverage } from "./coverage";
@@ -204,6 +205,8 @@ function repairedSettings(
         valid.has(id),
       ),
     );
+  if ("platform.v1" in result)
+    result["platform.v1"] = validatePlatform(result["platform.v1"], true);
   return { result, unresolved };
 }
 export async function executeRestore(

@@ -1,3 +1,4 @@
+import { usePlatform } from "../../core/platform/state";
 import { useEffect, useRef, useState } from "react";
 import {
   Archive,
@@ -52,6 +53,7 @@ export function RecoveryApp() {
   return <Recovery initial="status" />;
 }
 function Recovery({ initial }: { initial: string }) {
+  const appEvents = usePlatform((s) => s.state.events);
   const { entries } = useFilesystem(),
     launch = useLaunchData();
   const [tab, setTab] = useState(initial),
@@ -263,6 +265,7 @@ function Recovery({ initial }: { initial: string }) {
           ["points", "Restore points", Clock],
           ["versions", "File versions", History],
           ["storage", "Storage & retention", HardDrive],
+          ["apps", "Application history", History],
         ].map(([id, label, Icon]) => {
           const I = Icon as typeof Archive;
           return (
@@ -297,6 +300,7 @@ function Recovery({ initial }: { initial: string }) {
                 points: "Moments worth keeping.",
                 versions: "Every saved chapter.",
                 storage: "Make room for what matters.",
+                apps: "Your application timeline.",
               }[tab]
             }
           </h2>
@@ -310,6 +314,7 @@ function Recovery({ initial }: { initial: string }) {
                 points: "Immutable copies with an explicit recoverable scope.",
                 versions: "Previous content captured at committed text saves.",
                 storage: "Local history has limits. Keep independent exports.",
+                apps: "Real local install, update, rollback and removal events.",
               }[tab]
             }
           </p>
@@ -987,6 +992,31 @@ function Recovery({ initial }: { initial: string }) {
                 )}
               </section>
             </div>
+          </>
+        )}
+        {tab === "apps" && (
+          <>
+            <div className="recovery-timeline">
+              {[...appEvents].reverse().map((e) => (
+                <article key={e.id}>
+                  <div className="timeline-date">
+                    {new Date(e.time).toLocaleString()}
+                  </div>
+                  <div className="point-card">
+                    <h3>{e.appId}</h3>
+                    <p>
+                      {e.action} / {e.version}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+            {!appEvents.length && <p>No application lifecycle events yet.</p>}
+            <p className="recovery-note">
+              Package rollback is managed in App Center. One previous package
+              may be retained; application data is not automatically rolled
+              back.
+            </p>
           </>
         )}
         {tab === "storage" && (

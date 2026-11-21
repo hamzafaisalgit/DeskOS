@@ -171,18 +171,33 @@ export class Filesystem {
       },
     );
   }
-  async saveDocument(id: string, text: string, revision: number) {
+  async saveDocument(
+    id: string,
+    text: string,
+    revision: number,
+    authorize?: () => void,
+  ) {
     return this.transaction(async () => {
       const e = await this.getEntry(id);
       if ((e.revision ?? 0) !== revision)
         throw Error(
           "Conflict: another application saved this file. Reload or Save As to keep both versions.",
         );
-      await this.updateFileContent(id, new Blob([text], { type: e.mime }));
+      await this.updateFileContent(
+        id,
+        new Blob([text], { type: e.mime }),
+        undefined,
+        authorize,
+      );
       return this.getEntry(id);
     });
   }
-  async updateFileContent(id: string, blob: Blob, expectedModified?: number) {
+  async updateFileContent(
+    id: string,
+    blob: Blob,
+    expectedModified?: number,
+    authorize?: () => void,
+  ) {
     return this.transaction(async () => {
       const e = await this.getEntry(id);
       if (e.trashed || e.kind !== "file")
@@ -192,6 +207,7 @@ export class Filesystem {
           "This file changed in another window. Reopen it before saving.",
         );
       await capturePrevious(this.database, e, blob);
+      authorize?.();
       await this.database.contents.put({ id, blob });
       await this.database.entries.update(id, {
         size: blob.size,

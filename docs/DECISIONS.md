@@ -60,3 +60,13 @@
 - Require a verified checkpoint for replacement, journal cross-storage progress and compensate failed writes. Never promise atomic localStorage/IndexedDB restoration.
 - Require dirty editors to be saved or closed. Pause mutation writes during application and require reload after settings replacement.
 - Omit optional encryption rather than represent ordinary ZIP compression as password protection.
+
+## Phase 7 decisions
+
+- Preserve trusted built-in React apps and extend one registry with pkg: IDs. Untrusted code uses only a trusted iframe host component.
+- Support small, bounded classic frontend packages. Store package resources/app data in one versioned localStorage record to provide a single-commit install/update path without changing filesystem schemas. Limits and measured byte usage are explicit.
+- Bind SDK identity to the host window, exact message source and random token. Enforce declarations/grants/file scopes for each privileged request. File grants never mean unrestricted filesystem access.
+- Reset grants on updates and retain one prior package for rollback. Data rollback is not claimed. Disabling/uninstalling closes package windows; built-ins cannot be uninstalled.
+- Reuse Monaco and filesystem save revisions in Builder. Use the same sandbox for previews rather than executing source in trusted React.
+- Sanitize Capsule-imported app state to disabled with no grants, preserving package/data portability without auto-execution.
+- Document iframe self-navigation and resource-abuse limits. CSP is not described as a complete network firewall.

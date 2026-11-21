@@ -96,7 +96,9 @@ export function validateLayouts(raw: unknown): WorkspaceLayout[] {
               (w) =>
                 w &&
                 typeof w.id === "string" &&
-                apps.some((a) => a.id === w.appId) &&
+                (apps.some((a) => a.id === w.appId) ||
+                  (typeof w.appId === "string" &&
+                    /^pkg:[a-z0-9.-]+$/.test(w.appId))) &&
                 ["x", "y", "width", "height"].every((k) =>
                   Number.isFinite(w[k as keyof LayoutWindow]),
                 ),

@@ -1,3 +1,4 @@
+import { usePlatform } from "./core/platform/state";
 import { db } from "./core/filesystem/database";
 import { filesystem } from "./core/filesystem/service";
 import { SpaceSwitcher, SpacesOverview } from "./components/spaces/Spaces";
@@ -76,6 +77,7 @@ function Toasts() {
   );
 }
 export default function App() {
+  usePlatform((s) => s.revision);
   const windows = useDesk((s) => s.windows);
   const p = useDesk((s) => s.prefs);
   const active = useDesk((s) => s.active);

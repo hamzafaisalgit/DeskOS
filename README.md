@@ -33,7 +33,7 @@ Browser tests default to installed Google Chrome (`channel: 'chrome'` in playwri
 
 ## Integrated desktop
 
-Phases 1-6 provide window management, themes, desktop shortcuts, Files, filesystem-backed Notes, DeskShell, Code Studio and Calculator. All document apps share the same IndexedDB files. Right-click files in Explorer or on the desktop to choose **Open with**. Explorer also retains its quick preview editor.
+Phases 1-7 provide window management, themes, desktop shortcuts, Files, filesystem-backed Notes, DeskShell, Code Studio and Calculator. All document apps share the same IndexedDB files. Right-click files in Explorer or on the desktop to choose **Open with**. Explorer also retains its quick preview editor.
 
 Notes edits plain text or Markdown, with formatting tools, a reading view, favorites, recent files, search and export. Use **Copy legacy notes to Documents** to copy original scratchpads into files; originals are retained. Save explicitly with Ctrl/Cmd+S. Dirty tabs prompt before closing, and conflicting saves require Reload or Save As.
 
@@ -99,3 +99,17 @@ Defaults: 10 versions per file, up to 30 configurable, a 50 MB global version ca
 Coverage: virtual file metadata/content/favorites/Trash, persisted system/appearance preferences, Spaces/order/layouts/templates/snapshots/window references, legacy scratchpads, media collections/resume/PDF bookmarks/preferences/tag cache, calculator history and editor/Explorer preferences. Saved Notes/code/Canvas documents and imported media are files. Fixed wallpapers and associations are bundled application code. Historical version blobs, local restore-point archives/journals, unsaved buffers, runtime playback/Terminal scrollback, transient UI, Blob URLs, credentials and browser/host data are excluded. Historical archives can be downloaded individually from Restore Points.
 
 See docs/ARCHITECTURE.md for the archive schema, coverage registry and restore safety model. No account, server, encryption, scheduled/background backup or remote upload is involved.
+
+## App Center and developer ecosystem
+
+Open App Center from the launcher or Settings > Applications. Six real optional tools are bundled: Focus Timer, Unit Converter, Color Palette Studio, Markdown Previewer, JSON Formatter and Mini Puzzle. Install them locally, launch them like normal apps, pin shortcuts, move their windows between Spaces, inspect permissions, disable or uninstall them. Built-in apps remain trusted system components.
+
+Import a .deskapp through the picker or drop it into App Center. Inspection validates its manifest/resources before a separate install/update confirmation. Updates require a higher version, preserve app-owned data, clear grants and retain one previous package for rollback. Rollback does not roll back data. Uninstall explicitly offers retaining or deleting owned data; shared filesystem documents remain.
+
+App Builder includes three starters, the shared Monaco editor, restricted preview, source saving to Projects, Code Studio integration, package export and local installation. See [Developer Guide](docs/DEVELOPER_GUIDE.md) for the real manifest, API and package format.
+
+SDK 1 offers app info, theme, runtime title, notifications, isolated app storage and selected text-file access. Privileged methods require declared capabilities plus user approval. File scopes are per-window, selected through a host picker, revision checked, and cleared on revocation/close. App Center lists remembered grants and current selected file IDs.
+
+Installed scripts run only inside an opaque-origin iframe with restrictive CSP and a validated request bridge. This is not an OS process or complete network firewall: iframe self-navigation may contact a destination before host access stops. Only grant sensitive files to trusted code. No broad network, clipboard, popup, host-process or direct database API exists.
+
+Limits: 512 KiB packages, 40 resources, 20 installed apps, 2 MiB total serialized app platform storage and 64 KiB data per app. Classic HTML/CSS/JavaScript plus embedded raster images are supported; no npm, ES modules or remote assets. Unsaved iframe state does not survive closing/reload. Capsule's Applications category includes packages/data/events, but imported apps stay disabled and grants are discarded until explicit review. No manual migration is needed.

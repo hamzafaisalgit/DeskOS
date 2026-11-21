@@ -1,3 +1,4 @@
+import { usePlatform } from "./platform/state";
 import { DEFAULT_SPACE, validateSpaces, validateLayouts } from "./spaces/model";
 import type { Space, WorkspaceLayout } from "./spaces/model";
 import { filesystem } from "./filesystem/service";
@@ -12,6 +13,7 @@ export type WindowState = Bounds & {
   appId: AppId;
   spaceId?: string;
   global?: boolean;
+  title?: string;
   entryId?: string;
   minimized: boolean;
   maximized: boolean;
@@ -454,6 +456,10 @@ export const useDesk = create<State>((set, get) => ({
     const used = new Set<string>();
     let missing = 0;
     for (const item of l.windows) {
+      if (!apps.some((a) => a.id === item.appId)) {
+        missing++;
+        continue;
+      }
       let entryId = item.entryId;
       if (entryId) {
         try {
@@ -534,6 +540,10 @@ export const useDesk = create<State>((set, get) => ({
   },
   open: (appId, entryId) => {
     const app = appById(appId);
+    if (!app) {
+      get().notify("This application is disabled or unavailable.", "warning");
+      return;
+    }
     const existing = get().windows.find((w) => w.appId === appId);
     if (app.single && existing) {
       if (entryId)
@@ -764,3 +774,34 @@ if (typeof window !== "undefined")
       layouts: s.layouts,
     });
   });
+
+usePlatform.subscribe((next, prev) => {
+  if (next.state.installed === prev.state.installed) return;
+  const changedIds = new Set(
+    [
+      ...prev.state.installed.filter((p) => {
+        const n = next.state.installed.find(
+          (n) => n.package.manifest.id === p.package.manifest.id,
+        );
+        return (
+          !n?.enabled ||
+          n.package.manifest.version !== p.package.manifest.version
+        );
+      }),
+    ].map((p) => "pkg:" + p.package.manifest.id),
+  );
+  if (changedIds.size) {
+    useDesk.setState((s) => {
+      const windows = s.windows.filter((w) => !changedIds.has(w.appId));
+      return {
+        windows,
+        active:
+          windows.findLast((w) => w.spaceId === s.activeSpace && !w.minimized)
+            ?.id ?? null,
+        prefs: validatePreferences(s.prefs),
+        recent: s.recent.filter((id) => apps.some((a) => a.id === id)),
+      };
+    });
+    writeStorage("preferences", useDesk.getState().prefs);
+  }
+});

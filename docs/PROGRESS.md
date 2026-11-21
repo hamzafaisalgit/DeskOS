@@ -182,3 +182,34 @@ Exclusions/limits: Capsules are unencrypted and checksums do not authenticate se
 Metadata merge is intentionally unsupported. File merge imports Trash content as live files; replacement preserves archived Trash metadata. Missing imported metadata references are pruned/reported where supported. Cross-storage replacement is journaled/compensated rather than globally atomic. If rollback also fails, use the retained checkpoint. Avoid concurrent mutation from other browser tabs. Local points share site storage and are not protection against browser-data clearing or device loss. Reload after restoring settings. Existing large Monaco bundle warnings remain.
 
 Main files: src/core/backup/, src/core/history/, src/applications/recovery/, filesystem database/service, registry, storage pause control, dirty guards, Explorer/Settings/global commands and overlay focus handling. No manual migration/setup required; use the reload action after metadata restore. Phase 7 remains unimplemented.
+
+## Phase 7: App Center, SDK and application ecosystem (2026-11-21)
+
+Implemented a local App Center with discovery, categories, search, sorting, accurate installed/update state, app details, permissions, data measurements, enable/disable, explicit uninstall/data retention and offline package import/update. Six functional optional packages ship in the catalog: Focus Timer, Unit Converter, Color Palette Studio, Markdown Previewer, JSON Formatter and Mini Puzzle. Built-ins remain trusted/uninstall-protected.
+
+The unified registry adds enabled package metadata under pkg: IDs, retaining original built-in IDs. Package windows use the existing manager, launch parameters, icons, dock/desktop pinning, Open with and Spaces. Disable/remove/update closes affected instances and unavailable pins; unsupported snapshot app references degrade gracefully. No untrusted JavaScript is imported into the trusted React runtime.
+
+The .deskapp schema validates versioned manifests, reverse-domain IDs, entrypoint, resources, compatibility, sizes, paths, bounded decompression and CRC before a separate install confirmation. Stored package resources, one prior version, isolated app-owned data, grants and bounded lifecycle events use versioned platform.v1 storage. Updates require a higher semantic version, preserve data, reset grants and retain one package for explicit rollback. Rollback preserves current data and disables the package pending review. External import preference, corrupt-state reporting and retained-data cleanup are functional.
+
+SDK 1 includes app info, effective theme/Space accent, runtime window title, notifications, isolated JSON storage and host-picked text files. Host RPC validates exact source, opaque origin, session token, method/parameters, capability declarations, grants, scopes, replay/rate/size/session validity. Permission UI supports once/window/remember, and revocation clears scopes and pending authorization. Scoped file saves use shared revision/history services with authorization rechecked immediately before writing after asynchronous work.
+
+App Builder reuses Monaco and offers Hello DeskOS, Notes Utility and Personal Widget starters; setup fields, four-file source editing, restricted preview, Projects saves, Code Studio editing/reload, package export and confirmation-based installation. Preview uses the same sandbox and a separate data namespace.
+
+Capsule adds a versioned Applications adapter for packages/previous package/data/events/grant metadata. Restore validates resources, disables imported apps and removes grants; no imported code auto-runs. Older Capsules remain compatible. Time Machine includes actual application lifecycle history. Developer documentation is in DEVELOPER_GUIDE.md.
+
+Verification:
+
+- TypeScript/Vite production build passes.
+- ESLint passes.
+- 48 unit/service tests pass (three focused platform tests added): package round-trip/install/central registration/uninstall/update with retained data; invalid manifest/session/declaration/file-scope rejection; grant revocation and actual Capsule round-trip that disables apps/discards grants while preserving data.
+- All 21 Chrome browser tests pass against the production build. Two new workflows verify real catalog app installation/functionality, parent-page isolation, remembered permission/revocation/denial, uninstall, Builder preview/install, undeclared filesystem request rejection and installed app restoration after reload.
+- Prior desktop, document, filesystem, media, Spaces and Capsule regressions pass.
+- Screenshot: phase7-app-center.png.
+
+No dependencies added. Main implementation: src/core/platform/, src/applications/platform/, central registry/store/window/launch integration, Settings, file associations, Capsule adapters and application history in Recovery. Existing filesystem saves gained an optional host authorization callback used for pending SDK writes.
+
+Limits: frontend classic JS only; no Node/npm/modules, arbitrary resource loading, backend, remote update discovery, clipboard capability or full network permission. Sandbox allow-scripts omits same-origin/popups/downloads/top-navigation/forms and restricts resource/network APIs with CSP. Iframe self-navigation can still contact a destination before host access invalidation; this is not a network firewall or OS process. Resource abuse cannot be fully contained in a browser frontend. Users should grant sensitive files only to trusted code.
+
+Packages cap at 512 KiB/40 resources, total serialized platform storage at 2 MiB, app-owned data at 64 KiB and installed apps at 20. Selected text access is limited to 128 KiB and serialized request overhead can reduce write size. One previous package is retained; app data is not rolled back. Unsaved iframe state does not survive close/update/reload. Builder source saves commit each file independently. Cross-tab simultaneous package management is not coordinated. Existing Monaco bundle-size warnings remain.
+
+No manual migration required. Capsule-imported apps require explicit enabling and fresh permission review; metadata restore uses the existing reload workflow. Phase 8 remains unimplemented.

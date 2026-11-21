@@ -48,6 +48,8 @@ export function SettingsApp() {
           ["Media", Palette],
           ["Spaces", Monitor],
           ["Recovery", Info],
+          ["Applications", AppWindow],
+          ["Developer", Info],
         ].map(([name, Icon]) => {
           const I = Icon as typeof Palette;
           return (
@@ -66,6 +68,45 @@ export function SettingsApp() {
         <small>SETTINGS</small>
         <h2>{tab}</h2>
         <p className="muted">A desktop that feels like you.</p>
+        {tab === "Applications" && (
+          <>
+            <h3>Installed apps & permissions</h3>
+            <p>
+              Built-in apps are trusted DeskOS components. Installed packages
+              run in opaque-origin iframes with host-enforced capabilities.
+            </p>
+            <button
+              className="primary"
+              onClick={() => useDesk.getState().open("app-center")}
+            >
+              Manage applications, storage and permissions
+            </button>
+            <p>
+              Package file handlers appear under Open with. Built-in handlers
+              remain the defaults.
+            </p>
+          </>
+        )}
+        {tab === "Developer" && (
+          <>
+            <h3>DeskOS SDK 1</h3>
+            <p>
+              Create offline HTML/CSS/classic JavaScript apps with versioned
+              manifests and a restricted host bridge.
+            </p>
+            <button onClick={() => useDesk.getState().open("app-builder")}>
+              Open App Builder
+            </button>
+            <button onClick={() => useDesk.getState().open("app-center")}>
+              Install a local package
+            </button>
+            <p>
+              SDK capabilities: app info, theme, window title, app storage,
+              notifications and selected text files. Browser sandboxing is not a
+              separate operating-system process or a network firewall.
+            </p>
+          </>
+        )}
         {tab === "Recovery" && (
           <>
             <h3>Capsule & Time Machine</h3>

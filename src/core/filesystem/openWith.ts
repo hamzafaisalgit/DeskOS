@@ -1,8 +1,9 @@
 ﻿import { useDesk } from "../store";
+import { apps } from "../registry";
 import type { AppId } from "../registry";
 import type { Entry } from "./types";
 import { fileHandler } from "./associations";
-export function compatibleApps(e: Entry): AppId[] {
+function builtInHandlers(e: Entry): AppId[] {
   if (e.kind !== "file") return [];
   if (e.extension === "deskcanvas") return ["canvas"];
   const handler = fileHandler(e);
@@ -16,6 +17,17 @@ export function compatibleApps(e: Entry): AppId[] {
       ? ["notes", "code"]
       : ["code"];
   return [];
+}
+export function compatibleApps(e: Entry): AppId[] {
+  return [
+    ...builtInHandlers(e),
+    ...apps
+      .filter(
+        (a) =>
+          a.source === "package" && a.supportedFileTypes.includes(e.extension),
+      )
+      .map((a) => a.id),
+  ];
 }
 export function openDocument(e: Entry) {
   const app = compatibleApps(e)[0];

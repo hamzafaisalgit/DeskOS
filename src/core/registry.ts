@@ -1,3 +1,5 @@
+import { usePlatform } from "./platform/state";
+import type { AppPackage } from "./platform/types";
 import { lazy } from "react";
 import {
   Folder,
@@ -14,6 +16,9 @@ import {
   Archive,
   History,
   ShieldCheck,
+  Package,
+  Store,
+  Blocks,
 } from "lucide-react";
 export type AppId =
   | "files"
@@ -29,8 +34,11 @@ export type AppId =
   | "canvas"
   | "capsule"
   | "time-machine"
-  | "recovery";
-export const apps = [
+  | "recovery"
+  | "app-center"
+  | "app-builder"
+  | `pkg:${string}`;
+export const builtInApps = [
   {
     id: "files",
     icon: Folder,
@@ -309,7 +317,90 @@ export const apps = [
     minHeight: 360,
     single: true,
   },
+  {
+    id: "app-center",
+    icon: Store,
+    component: lazy(() => import("../applications/platform/AppCenter")),
+    resizable: true,
+    supportedFileTypes: [] as string[],
+    name: "App Center",
+    category: "System",
+    description: "Discover, install and manage local applications",
+    color: "#a69bdf",
+    width: 1100,
+    height: 720,
+    minWidth: 420,
+    minHeight: 360,
+    single: true,
+  },
+  {
+    id: "app-builder",
+    icon: Blocks,
+    component: lazy(() => import("../applications/platform/AppBuilder")),
+    resizable: true,
+    supportedFileTypes: [] as string[],
+    name: "App Builder",
+    category: "System",
+    description: "Build, preview and package small DeskOS apps",
+    color: "#a69bdf",
+    width: 1100,
+    height: 720,
+    minWidth: 420,
+    minHeight: 360,
+    single: true,
+  },
 ] as const;
+export type AppDefinition = {
+  id: AppId;
+  name: string;
+  icon: typeof Package;
+  component: (typeof builtInApps)[number]["component"];
+  resizable: boolean;
+  supportedFileTypes: readonly string[];
+  category: string;
+  description: string;
+  color: string;
+  width: number;
+  height: number;
+  minWidth: number;
+  minHeight: number;
+  single: boolean;
+  source?: "builtin" | "package";
+  manifest?: AppPackage["manifest"];
+};
+export const apps: AppDefinition[] = [...builtInApps];
+const sandboxComponent = lazy(() => import("../applications/platform/Sandbox"));
+function syncInstalled() {
+  apps.splice(0, apps.length, ...builtInApps);
+  for (const item of usePlatform
+    .getState()
+    .state.installed.filter((i) => i.enabled)) {
+    const m = item.package.manifest;
+    apps.push({
+      id: `pkg:${m.id}`,
+      name: m.name,
+      icon: Package,
+      component: sandboxComponent,
+      resizable: true,
+      supportedFileTypes: m.fileTypes,
+      category: m.category,
+      description:
+        m.description + " / " + m.developer + " / " + m.keywords.join(" "),
+      color: "#a6b8db",
+      width: 780,
+      height: 560,
+      minWidth: 360,
+      minHeight: 280,
+      single: !m.multiple,
+      source: "package",
+      manifest: m,
+    });
+  }
+}
+syncInstalled();
+usePlatform.subscribe((next, prev) => {
+  if (next.state.installed !== prev.state.installed) syncInstalled();
+});
 export const appById = (id: AppId) => apps.find((a) => a.id === id)!;
 export const searchApps = (query: string) =>
   apps.filter((a) =>
